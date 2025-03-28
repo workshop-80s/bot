@@ -1,14 +1,8 @@
 version: 2.1
 
-executors:
-  default:
-    docker:
-      image: cimg/go:1.23
-    working_directory: ~/project
 
 jobs:
   build: # this can be any name you choose
-    executor: default
     steps:
       - checkout # checkout source code
       - run:
