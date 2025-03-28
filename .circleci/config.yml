@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout              
       - run: echo "build hello world"
+      - run:
+          name: Add github.com to known hosts
+          command: ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
           name: "clone migration"
           command: git clone git@github.com:workshop-80s/migration.git
