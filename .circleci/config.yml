@@ -11,8 +11,8 @@ jobs:
           name: log
           command: echo "log..."
       - run: 
-        name: "env"
-        command: echo "${SSH_PRIVATE_KEY}"
+          name: "env"
+          command: echo "${SSH_PRIVATE_KEY}"
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
