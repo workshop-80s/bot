@@ -29,8 +29,8 @@ jobs:
       #       ssh-keyscan github.com >> ~/.ssh/known_hosts
       - checkout # checkout source code
       - run:
-        - name: debug
-        - command: echo $SSH_PRIVATE_KEY
+        name: debug
+        command: echo $SSH_PRIVATE_KEY
       # - restore_cache:
       #     name: Restore Cache
       #     keys:
@@ -64,5 +64,5 @@ workflows:
     jobs:
       - build:
         context:
-          github
+          - github
 
