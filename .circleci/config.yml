@@ -3,7 +3,7 @@ version: 2.1
 executors:
   default:
     docker:
-      - image: cimg/go:1.23
+      image: cimg/go:1.23
     working_directory: ~/project
 
 jobs:
@@ -19,5 +19,4 @@ workflows:
     jobs:
       build:
         context:
-          - github
-
+          github
