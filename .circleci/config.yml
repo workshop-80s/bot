@@ -5,16 +5,17 @@ jobs:
     docker:
       - image: cimg/base:2023.03
     steps:
-      - checkout              
-      # - run:
-      #     name: Setup github
-      #     command: |
-      #       mkdir -p ~/.ssh
-      #       echo "$ssh_key" > ~/.ssh/id_rsa
-      #       chmod 600 ~/.ssh/id_rsa
-      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - checkout
+      - run: echo "test"
+      - run:
+          name: Setup github
+          command: |
+            mkdir -p ~/.ssh
+            echo "$ssh_key" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
-          name: "list dir1"
+          name: "list dir"
           command: ls -la
       - run: 
           name: "clone migration"
