@@ -3,10 +3,15 @@ version: 2.1
 jobs:
   build: # this can be any name you choose
     steps:
-      - run:
-        name: debug
-        command: echo "hello world"
+      - checkout              
+      - run: echo "build hello world"
+  test:
+    steps:
+      - checkout              
+      - run: echo "test hello world"
+
 workflows:
   initiate:
     jobs:
       - build
+      - test
