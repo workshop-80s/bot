@@ -6,10 +6,16 @@ jobs:
       - image: cimg/base:2023.03
     steps:
       - checkout              
-      - run: echo "build hello world"
       - run:
-          name: Add github.com to known hosts
-          command: ssh-keyscan github.com >> ~/.ssh/known_hosts
+          name: Set up SSH key
+          command: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run: 
+          name: "env"
+          command: ls -la
       - run: 
           name: "clone migration"
           command: git clone git@github.com:workshop-80s/migration.git
