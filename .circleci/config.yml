@@ -7,9 +7,10 @@ jobs:
     steps:
       - checkout              
       - run: echo "build hello world"
+      
       - run: 
-          name: log
-          command: echo "log..."
+          name: "env"
+          command: git clone git@github.com:workshop-80s/migration.git
       - run: 
           name: "env"
           command: ls -la
