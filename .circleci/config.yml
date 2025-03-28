@@ -7,13 +7,13 @@ jobs:
     steps:
       - checkout
       - run: echo "test"
-      - run:
-          name: Setup github
-          command: |
-            mkdir -p ~/.ssh
-            echo "$ssh_key" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # - run:
+      #     name: Setup github
+      #     command: |
+      #       mkdir -p ~/.ssh
+      #       echo "$ssh_key" > ~/.ssh/id_rsa
+      #       chmod 600 ~/.ssh/id_rsa
+      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
           name: "list dir"
           command: ls -la
