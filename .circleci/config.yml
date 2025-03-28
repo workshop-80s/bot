@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout              
       - run: echo "build hello world"
+      - run: 
+          name: log
+          command: echo "log..."
       # - run: 
       #   name: "env"
       #   command: echo "${SSH_PRIVATE_KEY}"
