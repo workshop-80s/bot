@@ -13,6 +13,9 @@ jobs:
       - run: 
           name: "env"
           command: echo "${SSH_PRIVATE_KEY}"
+      - run: 
+          name: "env"
+          command: npm i
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
