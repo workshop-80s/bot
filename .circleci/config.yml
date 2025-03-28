@@ -28,25 +28,25 @@ jobs:
       #       chmod 600 ~/.ssh/id_rsa
       #       ssh-keyscan github.com >> ~/.ssh/known_hosts
       - checkout # checkout source code
-      - restore_cache:
-          name: Restore Cache
-          keys:
-            - go-mod-v4-{{ checksum "go.sum" }}
-      - run:
-          name: Install Dependencies
-          command: go get ./...
-          #go mod tidy
-      - save_cache:
-          name: Saving Cache
-          key: go-mod-v4-{{ checksum "go.sum" }}
-          paths:
-            - "/go/pkg/mod"
-      - run:
-          name: Check version
-          command: go version
-      - run:
-          name: Install MySQL client
-          command: sudo apt-get update && sudo apt-get install -y mysql-client
+      # - restore_cache:
+      #     name: Restore Cache
+      #     keys:
+      #       - go-mod-v4-{{ checksum "go.sum" }}
+      # - run:
+      #     name: Install Dependencies
+      #     command: go get ./...
+      #     #go mod tidy
+      # - save_cache:
+      #     name: Saving Cache
+      #     key: go-mod-v4-{{ checksum "go.sum" }}
+      #     paths:
+      #       - "/go/pkg/mod"
+      # - run:
+      #     name: Check version
+      #     command: go version
+      # - run:
+      #     name: Install MySQL client
+      #     command: sudo apt-get update && sudo apt-get install -y mysql-client
       # - run:
       #     name: Verify MySQL Connection
       #     command: mysql -h 127.0.0.1 -u test -ppass -e "SHOW DATABASES;"
