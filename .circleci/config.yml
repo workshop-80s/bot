@@ -11,6 +11,6 @@ jobs:
 workflows:
   initiate:
     jobs:
-      build:
-        context:
-          github
+      - build:
+          context:
+            github
