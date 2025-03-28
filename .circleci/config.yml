@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout              
       - run:
-          name: Set up SSH key
+          name: Setup github
           command: |
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
