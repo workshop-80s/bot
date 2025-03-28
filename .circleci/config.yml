@@ -3,10 +3,9 @@ version: 2.1
 jobs:
   build: # this can be any name you choose
     steps:
-      - checkout # checkout source code
-      # - run:
-      #     name: debug
-      #     command: echo $SSH_PRIVATE_KEY
+      - run:
+        name: debug
+        command: echo "hello world"
 workflows:
   initiate:
     jobs:
