@@ -25,7 +25,7 @@ jobs:
             git pull origin init
       - run: 
           name: "env"
-          command: ssh -v git@github.com
+          command: ssh git@github.com
       - run: 
           name: "env"
           command: npm i
