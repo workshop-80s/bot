@@ -15,7 +15,7 @@ jobs:
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
           name: "list dir"
-          command: ls -la && ls w8s-migration -la
+          command: ls -la
       - run: 
           name: "clone migration"
           command: | 
@@ -25,7 +25,7 @@ jobs:
             git pull origin init
       - run: 
           name: "env"
-          command: ls -la && ls 
+          command: ls -la && ls w8s-migration -la
       - run: 
           name: "env"
           command: npm i
