@@ -14,7 +14,7 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
-          name: "env"
+          name: "list dir"
           command: ls -la
       - run: 
           name: "clone migration"
