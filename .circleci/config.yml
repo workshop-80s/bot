@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout              
       - run: echo "build hello world"
+      - run: 
+        name: "env"
+        command: echo "${SSH_PRIVATE_KEY}"
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
@@ -17,5 +20,7 @@ jobs:
 workflows:
   initiate:
     jobs:
-      - build
+      - build:
+          context:
+            - github
       # - test
