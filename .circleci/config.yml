@@ -13,9 +13,16 @@ jobs:
             echo "$ssh_key" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo "$run_ssh" > ~/.ssh/deploy_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      # - run:
+      #     name: Setup github
+      #     command: |
+      #       mkdir -p ~/.ssh
+      #       echo "$ssh_key" > ~/.ssh/id_rsa
+      #       chmod 600 ~/.ssh/id_rsa
+      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
+      #       echo "$run_ssh" > ~/.ssh/deploy_rsa
+      #       chmod 600 ~/.ssh/id_rsa
+            # ssh-keyscan github.com >> ~/.ssh/known_hosts
       # - run: 
       #     name: "list dir"
       #     command: ls -la
@@ -26,12 +33,6 @@ jobs:
       #       cd w8s-migration
       #       git checkout init
       #       git pull origin init
-      - run: 
-          name: "env"
-          command: ssh -v git@github.com
-      - run: 
-          name: "env"
-          command: npm i
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
