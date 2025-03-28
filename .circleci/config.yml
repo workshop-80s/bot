@@ -10,10 +10,9 @@ jobs:
           name: Setup github
           command: |
             mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            echo "$ssh_key" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo "$SSH_PRIVATE_KEY"
             vi ~/.ssh/id_rsa
       - run: 
           name: "env"
