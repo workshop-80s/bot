@@ -1,0 +1,63 @@
+version: 2.1
+
+executors:
+  default:
+    docker:
+      - image: cimg/go:1.23
+      - image: mysql:8
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: "news-buzz_test"
+          MYSQL_USER: test
+          MYSQL_PASSWORD: pass
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        command: mysqld --sql-mode=''
+    working_directory: ~/project
+
+jobs:
+  build: # this can be any name you choose
+    # docker:
+    #   - image: cimg/go:1.23
+    executor: default
+    steps:
+      # - run:
+      #     name: Set up SSH key
+      #     command: |
+      #       mkdir -p ~/.ssh
+      #       echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+      #       chmod 600 ~/.ssh/id_rsa
+      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - checkout # checkout source code
+      - restore_cache:
+          name: Restore Cache
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go get ./...
+          #go mod tidy
+      - save_cache:
+          name: Saving Cache
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run:
+          name: Check version
+          command: go version
+      - run:
+          name: Install MySQL client
+          command: sudo apt-get update && sudo apt-get install -y mysql-client
+      # - run:
+      #     name: Verify MySQL Connection
+      #     command: mysql -h 127.0.0.1 -u test -ppass -e "SHOW DATABASES;"
+      # - run:
+      #     name: Clone migration
+      #     command: >-
+      #       GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_fingerprint'
+      #       git clone git@github.com:user/my-app-frontend.git ~/my-app-frontend
+
+workflows:
+  initiate:
+    jobs:
+      - build
+
