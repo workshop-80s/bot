@@ -1,3 +1,13 @@
+---
+  variable:
+    ssh_key: j3ns_devops
+    dependency: 
+      migration:
+        - url:  git@github.com:workshop-80s/migration.git
+        - dir: w8s-migration
+        - branch: init
+...
+
 version: 2.1
 
 jobs:
@@ -9,30 +19,20 @@ jobs:
       - run:
           name: Setup github
           command: |
-            mkdir -p ~/.ssh
-            echo "$j3ns_devops" > ~/.ssh/id_rsa
+            mkdir -p ~/.ssh 
+            echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-      # - run:
-      #     name: Setup github
-      #     command: |
-      #       mkdir -p ~/.ssh
-      #       echo "$ssh_key" > ~/.ssh/id_rsa
-      #       chmod 600 ~/.ssh/id_rsa
-      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
-      #       echo "$run_ssh" > ~/.ssh/deploy_rsa
-      #       chmod 600 ~/.ssh/id_rsa
-            # ssh-keyscan github.com >> ~/.ssh/known_hosts
       # - run: 
       #     name: "list dir"
       #     command: ls -la
       - run: 
           name: "clone migration"
           command: | 
-            git clone git@github.com:workshop-80s/migration.git w8s-migration
-            cd w8s-migration
-            git checkout init
-            git pull origin init
+            git clone git@github.com:workshop-80s/migration.git {{ variable.dependency.migration.dir }}
+            cd ./{{ variable.dependency.migration.dir }}
+            git checkout {{ variable.dependency.migration.branch }}
+            git pull origin {{ variable.dependency.migration.branch }}
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
