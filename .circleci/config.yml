@@ -59,5 +59,7 @@ workflows:
       - build:
           context:
             - github
-      - migration
-      # - test
+      - migration:
+          context:
+            - github
+
