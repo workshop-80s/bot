@@ -1,6 +1,7 @@
 version: 2.1
 
-cmd: &cmd "echo Hello World"
+variable:
+ - &cmd "echo Hello World"
 
 # name: &migration_name "w8s-migration"
 # branch: &migration_branch init
@@ -16,7 +17,7 @@ jobs:
       - checkout
       - run: 
           name: "list dir"
-          command: &cmd
+          command: *cmd
       # - run:
       #     name: Setup github
       #     command: |
