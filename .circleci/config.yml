@@ -3,8 +3,8 @@ version: 2.1
 variables:
   dependency: 
     migration:
-      name: &migration_name w8s-migration
-      name: &migration_branch w8s-migration
+      name: &migration_name "w8s-migration"
+      branch: &migration_branch init
       git:  &migration_git git@github.com:workshop-80s/migration.git
   
 
