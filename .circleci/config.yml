@@ -1,12 +1,10 @@
----
-  variable:
-    ssh_key: j3ns_devops
-    dependency: 
-      migration:
-        - url:  git@github.com:workshop-80s/migration.git
-        - dir: w8s-migration
-        - branch: init
-...
+variable:
+  ssh_key: j3ns_devops
+  dependency: 
+    migration:
+      - url:  git@github.com:workshop-80s/migration.git
+      - dir: w8s-migration
+      - branch: init
 
 version: 2.1
 
