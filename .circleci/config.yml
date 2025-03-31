@@ -26,13 +26,13 @@ jobs:
       # - run: 
       #     name: "list dir"
       #     command: ls -la
-      # - run: 
-      #     name: "clone migration"
-      #     command: | 
-      #       git clone git@github.com:workshop-80s/migration.git w8s-migration
-      #       cd w8s-migration
-      #       git checkout init
-      #       git pull origin init
+      - run: 
+          name: "clone migration"
+          command: | 
+            git clone git@github.com:workshop-80s/migration.git w8s-migration
+            cd w8s-migration
+            git checkout init
+            git pull origin init
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
