@@ -1,10 +1,6 @@
 version: 2.1
 
 parameters:
-  app:
-    ssh: 
-      type: string
-      default: "j3ns_devops"
   working_dir: 
     type: string
     default: "w8s-migration"
@@ -16,7 +12,7 @@ parameters:
     default: init
   sha1: 
     type: string
-    default: init 
+    default: init
 
 
 jobs:
@@ -33,6 +29,7 @@ jobs:
     docker:
       - image: cimg/base:2023.03
     environment:
+      ssh: j3ns_devops
       working_dir: << pipeline.parameters.working_dir >>
       git: << pipeline.parameters.git >>
       branch: << pipeline.parameters.branch >>
@@ -41,7 +38,7 @@ jobs:
           name: Setup github
           command: |
             mkdir -p ~/.ssh 
-            echo "$j3ns_devops" > ~/.ssh/id_rsa
+            echo "$$ssh" > ~/.ssh/id_rsa
             
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
