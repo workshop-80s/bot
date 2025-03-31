@@ -32,8 +32,11 @@ jobs:
       #     command: ls -la
       - run: 
           name: "clone migration"
+          params:
+            name: *migration_name
+            branch: *migration_branch
           command: | 
-            git clone git@github.com:workshop-80s/migration.git *migration_name
+            git clone git@github.com:workshop-80s/migration.git "$(params.name)"
             cd ./*migration_name
             git checkout *migration_branch
             git pull origin *migration_branch
