@@ -11,8 +11,8 @@ variables:
 jobs:
   build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
 
-    # docker:
-    #   - image: cimg/base:2023.03
+    docker:
+      - image: cimg/base:2023.03
     steps:
       - checkout
       - run: 
@@ -29,13 +29,13 @@ jobs:
       # - run: 
       #     name: "list dir"
       #     command: ls -la
-      - run: 
-          name: "clone migration"
-          command: | 
-            git clone git@github.com:workshop-80s/migration.git ${{ dir }}
-            cd ./${{ dir }}
-            git checkout init
-            git pull origin init
+      # - run: 
+      #     name: "clone migration"
+      #     command: | 
+      #       git clone git@github.com:workshop-80s/migration.git ${{ dir }}
+      #       cd ./${{ dir }}
+      #       git checkout init
+      #       git pull origin init
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
