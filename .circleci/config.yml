@@ -2,9 +2,9 @@ version: 2.1
 
 simple-anchor: &hw "echo Hello World"
 
-name: &migration_name "w8s-migration"
-branch: &migration_branch init
-git:  &migration_git git@github.com:workshop-80s/migration.git
+# name: &migration_name "w8s-migration"
+# branch: &migration_branch init
+# git:  &migration_git git@github.com:workshop-80s/migration.git
 
 
 jobs:
