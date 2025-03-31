@@ -37,12 +37,12 @@ jobs:
             git pull origin $branch
       
 
-  test:  
-    docker:
-      - image: cimg/base:2023.03
-    steps:
-      - checkout              
-      - run: echo "test hello world"
+  # test:  
+  #   docker:
+  #     - image: cimg/base:2023.03
+  #   steps:
+  #     - checkout              
+  #     - run: echo "test hello world"
 
 workflows:
   initiate:
@@ -51,7 +51,7 @@ workflows:
           context:
             - github
             - migration_branch: init
-      - test:
-          requires:
-            - build
+      # - test:
+      #     requires:
+      #       - build
 
