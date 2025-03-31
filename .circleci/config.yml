@@ -1,45 +1,50 @@
 version: 2.1
 
-variable:
-  - &cmd "echo Hello World"
-  - &migration_name "w8s-migration"
-
-# name: &migration_name "w8s-migration"
-# branch: &migration_branch "c"
-# git:  &migration_git git@github.com:workshop-80s/migration.git
+parameters:
+  image-tag:
+    type: string
+    default: "current"
+  workingdir:
+    type: string
+    default: "~/main"
 
 
 jobs:
   build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
-
     docker:
       - image: cimg/base:2023.03
+    environment:
+      IMAGETAG: << pipeline.parameters.image-tag >>
     steps:
       - checkout
+      - run:
+          name: Setup github
+          command: |
+            mkdir -p ~/.ssh 
+            echo "$j3ns_devops" > ~/.ssh/id_rsa
+            
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
           name: "list dir"
-          command: *cmd
-      # - run:
-      #     name: Setup github
-      #     command: |
-      #       mkdir -p ~/.ssh 
-      #       echo "$j3ns_devops" > ~/.ssh/id_rsa
-            
-      #       chmod 600 ~/.ssh/id_rsa
-      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
-      # - run: 
-      #     name: "list dir"
-      #     command: ls -la
+          command: echo "Image tag used was ${IMAGETAG}"
       - run: 
-          name: "clone migration"
-          params:
-            name: *migration_name
-            branch: "init"
-          command: | 
-            git clone git@github.com:workshop-80s/migration.git "$(params.name)"
-            cd ./*migration_name
-            git checkout *migration_branch
-            git pull origin *migration_branch
+          name: "list dir"
+          command: echo "wd: << pipeline.parameters.workingdir >>"
+          
+  # migration: 
+  #   steps:
+  #     - run: 
+  #         name: "clone migration"
+  #         params:
+  #           name: *migration_name
+  #           branch: "init"
+  #         command: | 
+  #           git clone git@github.com:workshop-80s/migration.git "$(params.name)"
+  #           cd ./*migration_name
+  #           git checkout *migration_branch
+  #           git pull origin *migration_branch
+ 
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
