@@ -1,7 +1,7 @@
 version: 2.1
 
 variable:
- - &cmd "echo Hello World"
+  - &cmd "echo Hello World"
 
 # name: &migration_name "w8s-migration"
 # branch: &migration_branch init
