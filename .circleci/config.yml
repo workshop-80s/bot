@@ -46,9 +46,10 @@ jobs:
 
 workflows:
   initiate:
+    migration_branch: init
     jobs:
       - build:
-          migration_branch: init
+          
           context:
             - github
       # # - test:
