@@ -1,13 +1,12 @@
 version: 2.1
 
 parameters:
-  migration_branch: 
+  migration_branch:
+    default: init
     type: string
-    default: main
   ssh: 
     type: string
     default: j3ns_devops
-
 
 jobs:
   build:
@@ -35,8 +34,30 @@ jobs:
             cd $working_dir
             git checkout $branch
             git pull origin $branch
-      
-
+  dependency:
+    docker:
+      - image: cimg/base:2023.03
+    environment:
+      ssh: << pipeline.parameters.ssh >>
+      migration_branch: << pipeline.parameters.migration_branch >>
+      migration_dir: w8s-migration
+      migration_git: git@github.com:workshop-80s/migration.git
+    steps:
+      - run:
+          name: setup github
+          command: |
+            mkdir -p ~/.ssh 
+            echo "$$ssh" > ~/.ssh/id_rsa
+            
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run: 
+          name: "clone migration"
+          command: | 
+            git clone $migration_git $migration_dir
+            cd $migration_dir
+            git checkout $migration_branch
+            git pull origin $migration_branch
   test:  
     docker:
       - image: cimg/base:2023.03
@@ -46,10 +67,8 @@ jobs:
 
 workflows:
   initiate:
-    migration_branch: init
     jobs:
       - build:
-          
           context:
             - github
       # # - test:
