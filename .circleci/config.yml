@@ -1,12 +1,12 @@
 version: 2.1
 
 variables:
-  location: "w8s-migration"
-  # dependency: 
-  #   migration:
-  #     url: git@github.com:workshop-80s/migration.git
-  #     dir: w8s-migration
-  #     branch: init
+  dependency: 
+    migration:
+      name: &migration-name w8s-migration
+      name: &migration-branch w8s-migration
+      git:  &migration-git git@github.com:workshop-80s/migration.git
+  
 
 jobs:
   build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run: 
           name: "list dir"
-          command: echo "$(location)"
+          command: echo "*migration-name"
       # - run:
       #     name: Setup github
       #     command: |
