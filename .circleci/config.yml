@@ -60,6 +60,6 @@ workflows:
           context:
             - github
       - migration:
-          require:
+          requires:
             - build
 
