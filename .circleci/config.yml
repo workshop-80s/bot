@@ -3,9 +3,9 @@ version: 2.1
 variables:
   dependency: 
     migration:
-      name: &migration-name w8s-migration
-      name: &migration-branch w8s-migration
-      git:  &migration-git git@github.com:workshop-80s/migration.git
+      name: &migration_name w8s-migration
+      name: &migration_branch w8s-migration
+      git:  &migration_git git@github.com:workshop-80s/migration.git
   
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run: 
           name: "list dir"
-          command: echo "*migration-name"
+          command: echo "*migration_name"
       # - run:
       #     name: Setup github
       #     command: |
