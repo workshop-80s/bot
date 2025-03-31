@@ -50,7 +50,7 @@ workflows:
       - build:
           migration_branch: init
           context:
-      #       - github
+            - github
       # # - test:
       # #     requires:
       # #       - build
