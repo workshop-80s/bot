@@ -30,7 +30,7 @@ jobs:
           command: echo "Image tag used was ${IMAGETAG}"
       - run: 
           name: "list dir"
-          command: echo "wd: << pipeline.parameters.workingdir >>"
+          command: echo "wd << pipeline.parameters.workingdir >>"
           
   # migration: 
   #   steps:
