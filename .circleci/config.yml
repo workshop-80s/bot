@@ -41,7 +41,7 @@ jobs:
       - run: 
           name: "clone migration"
           command: | 
-            git clone $(git) $working_dir
+            git clone $git $working_dir
             cd $working_dir
             git checkout $branch
             git pull origin $branch
