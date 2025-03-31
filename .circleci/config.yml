@@ -1,18 +1,22 @@
 version: 2.1
 
 parameters:
-    working_dir: 
+  app:
+    ssh: 
       type: string
-      default: "w8s-migration"
-    git:
-      type: string
-      default: git@github.com:workshop-80s/migration.git
-    branch: 
-      type: string
-      default: init
-    sha1: 
-      type: string
-      default: init
+      default: "j3ns_devops"
+  working_dir: 
+    type: string
+    default: "w8s-migration"
+  git:
+    type: string
+    default: git@github.com:workshop-80s/migration.git
+  branch: 
+    type: string
+    default: init
+  sha1: 
+    type: string
+    default: init 
 
 
 jobs:
@@ -21,6 +25,9 @@ jobs:
       - image: cimg/base:2023.03
     steps:
       - checkout
+      - run:
+          name: Setup github
+          command: echo "<< pipeline.parameters.app.ssh >>"
           
   migration:
     docker:
