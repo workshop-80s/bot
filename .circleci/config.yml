@@ -9,7 +9,8 @@ variable:
 version: 2.1
 
 jobs:
-  build: # this can be any name you choose  build:
+  build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
+
     docker:
       - image: cimg/base:2023.03
     steps:
@@ -18,7 +19,8 @@ jobs:
           name: Setup github
           command: |
             mkdir -p ~/.ssh 
-            echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
+            echo "$j3ns_devops" > ~/.ssh/id_rsa
+            
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       # - run: 
