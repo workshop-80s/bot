@@ -38,9 +38,6 @@ jobs:
       - run:
           name: Build Application
           command: go build -v ./...
-      # - run:
-      #     name: Run Tests
-      #     command: go test ./...
   dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
@@ -83,7 +80,7 @@ workflows:
             - github
       - dependency:
           requires:
-            build
+            - build
       - test:
           requires:
             - dependency
