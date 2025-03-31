@@ -1,3 +1,6 @@
+# https://circleci.com/docs/configuration-reference/
+# https://circleci.com/docs/reusing-config/#parameter-syntax
+
 version: 2.1
 
 parameters:
@@ -19,21 +22,6 @@ jobs:
       git: git@github.com:workshop-80s/migration.git
     steps:
       - checkout
-      - run:
-          name: setup github
-          command: |
-            mkdir -p ~/.ssh 
-            echo "$$ssh" > ~/.ssh/id_rsa
-            
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: 
-          name: "clone migration"
-          command: | 
-            git clone $git $working_dir
-            cd $working_dir
-            git checkout $branch
-            git pull origin $branch
   dependency:
     docker:
       - image: cimg/base:2023.03
@@ -71,7 +59,10 @@ workflows:
       - build:
           context:
             - github
-      # # - test:
-      # #     requires:
-      # #       - build
+      - dependency:
+          requires:
+            build
+      - test:
+          requires:
+            - dependency
 
