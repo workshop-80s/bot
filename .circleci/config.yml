@@ -25,19 +25,19 @@ jobs:
       git: git@github.com:workshop-80s/migration.git
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - go-mod-{{ checksum "go.sum" }}
-      - run:
-          name: Download Dependencies
-          command: go mod download
-      - save_cache:
-          key: go-mod-v1-{{ checksum "go.sum" }}
-          paths:
-            - /go/pkg/mod  # Default location for Go modules
-      - run:
-          name: Build Application
-          command: go build -v ./...
+      # - restore_cache:
+      #     keys:
+      #       - go-mod-{{ checksum "go.sum" }}
+      # - run:
+      #     name: Download Dependencies
+      #     command: go mod download
+      # - save_cache:
+      #     key: go-mod-v1-{{ checksum "go.sum" }}
+      #     paths:
+      #       - /go/pkg/mod  # Default location for Go modules
+      # - run:
+      #     name: Build Application
+      #     command: go build -v ./...
   dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
