@@ -1,7 +1,7 @@
 version: 2.1
 
 variables:
-  dir: "w8s-migration"
+  location: "w8s-migration"
   # dependency: 
   #   migration:
   #     url: git@github.com:workshop-80s/migration.git
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run: 
           name: "list dir"
-          command: echo $(dir)
+          command: echo $(location)
       # - run:
       #     name: Setup github
       #     command: |
