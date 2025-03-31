@@ -3,7 +3,10 @@ version: 2.1
 parameters:
   migration_branch: 
     type: string
-    default: init
+    default: main
+  ssh: 
+    type: string
+    default: j3ns_devops
 
 
 jobs:
@@ -11,10 +14,10 @@ jobs:
     docker:
       - image: cimg/base:2023.03
     environment:
-      ssh: j3ns_devops
+      branch: << pipeline.parameters.migration_branch >>
+      ssh: << pipeline.parameters.ssh >>
       working_dir: w8s-migration
       git: git@github.com:workshop-80s/migration.git
-      branch: << pipeline.parameters.branch >>
     steps:
       - checkout
       - run:
@@ -38,6 +41,7 @@ jobs:
     docker:
       - image: cimg/base:2023.03
     steps:
+      - checkout              
       - run: echo "test hello world"
 
 workflows:
@@ -46,6 +50,7 @@ workflows:
       - build:
           context:
             - github
+            - migration_branch: init
       - test:
           requires:
             - build
