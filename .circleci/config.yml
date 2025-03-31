@@ -1,13 +1,16 @@
 version: 2.1
 
 variables:
-  ssh_key: j3ns_devops
-  dir: w8s-migration
-  dependency: 
-    migration:
-      url: git@github.com:workshop-80s/migration.git
-      dir: w8s-migration
-      branch: init
+  - name: ssh_key
+    value: j3ns_devops
+  - name: dir
+    value: "w8s-migration"
+  # dir: "w8s-migration"
+  # dependency: 
+  #   migration:
+  #     url: git@github.com:workshop-80s/migration.git
+  #     dir: w8s-migration
+  #     branch: init
 
 jobs:
   build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
