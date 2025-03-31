@@ -1,20 +1,26 @@
 version: 2.1
 
 parameters:
-  image-tag:
-    type: string
-    default: "current"
-  workingdir:
-    type: string
-    default: "~/main"
+  dependency:
+    migration:
+      working_dir: 
+        type: string
+        default: "w8s-migration"
+      git:
+        type: string
+        default: git@github.com:workshop-80s/migration.git
+      branch: 
+        type: string
+        default: init
+      sha1: 
+        type: string
+        default: init
 
 
 jobs:
-  build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
+  build:
     docker:
       - image: cimg/base:2023.03
-    environment:
-      IMAGETAG: << pipeline.parameters.image-tag >>
     steps:
       - checkout
       - run:
@@ -25,26 +31,21 @@ jobs:
             
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: 
-          name: "list dir"
-          command: echo "Image tag used was ${IMAGETAG}"
-      - run: 
-          name: "list dir"
-          command: echo "wd << pipeline.parameters.workingdir >>"
           
-  # migration: 
-  #   steps:
-  #     - run: 
-  #         name: "clone migration"
-  #         params:
-  #           name: *migration_name
-  #           branch: "init"
-  #         command: | 
-  #           git clone git@github.com:workshop-80s/migration.git "$(params.name)"
-  #           cd ./*migration_name
-  #           git checkout *migration_branch
-  #           git pull origin *migration_branch
- 
+  migration:
+    environment:
+      working_dir: << pipeline.parameters.dependency.migration.working_dir >>
+      git: << pipeline.parameters.dependency.migration.git >>
+      branch: << pipeline.parameters.dependency.migration.working_dir >>
+    steps:
+      - run: 
+          name: "clone migration"
+          command: | 
+            git clone $(git) $(working_dir)
+            cd $(working_dir)
+            git checkout ${branch}
+            git pull origin ${branch}
+
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
@@ -58,5 +59,5 @@ workflows:
       - build:
           context:
             - github
-          
+      - migration
       # - test
