@@ -1,20 +1,18 @@
 version: 2.1
 
 parameters:
-  dependency:
-    migration:
-      working_dir: 
-        type: string
-        default: "w8s-migration"
-      git:
-        type: string
-        default: git@github.com:workshop-80s/migration.git
-      branch: 
-        type: string
-        default: init
-      sha1: 
-        type: string
-        default: init
+    working_dir: 
+      type: string
+      default: "w8s-migration"
+    git:
+      type: string
+      default: git@github.com:workshop-80s/migration.git
+    branch: 
+      type: string
+      default: init
+    sha1: 
+      type: string
+      default: init
 
 
 jobs:
@@ -33,10 +31,12 @@ jobs:
             ssh-keyscan github.com >> ~/.ssh/known_hosts
           
   migration:
+    docker:
+      - image: cimg/base:2023.03
     environment:
-      working_dir: << pipeline.parameters.dependency.migration.working_dir >>
-      git: << pipeline.parameters.dependency.migration.git >>
-      branch: << pipeline.parameters.dependency.migration.working_dir >>
+      working_dir: << pipeline.parameters.working_dir >>
+      git: << pipeline.parameters.git >>
+      branch: << pipeline.parameters.branch >>
     steps:
       - run: 
           name: "clone migration"
