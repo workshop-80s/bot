@@ -29,10 +29,10 @@ jobs:
       - run: 
           name: "clone migration"
           command: | 
-            git clone git@github.com:workshop-80s/migration.git {{ variable.dependency.migration.dir }}
-            cd ./{{ variable.dependency.migration.dir }}
-            git checkout {{ variable.dependency.migration.branch }}
-            git pull origin {{ variable.dependency.migration.branch }}
+            git clone git@github.com:workshop-80s/migration.git ${{ variable.dependency.migration.dir }}
+            cd ./${{ variable.dependency.migration.dir }}
+            git checkout ${{ variable.dependency.migration.branch }}
+            git pull origin ${{ variable.dependency.migration.branch }}
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
