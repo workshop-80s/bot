@@ -1,3 +1,5 @@
+version: 2.1
+
 variables:
   ssh_key: j3ns_devops
   dir: w8s-migration
@@ -6,8 +8,6 @@ variables:
       url: git@github.com:workshop-80s/migration.git
       dir: w8s-migration
       branch: init
-
-version: 2.1
 
 jobs:
   build: # this can be any name you choose  build:             echo "${{ variable.ssh_key }}" > ~/.ssh/id_rsa
@@ -30,10 +30,10 @@ jobs:
       - run: 
           name: "clone migration"
           command: | 
-            git clone git@github.com:workshop-80s/migration.git ${dir}
-            cd ./${dir}
-            git checkout ${dependency.migration.branch}
-            git pull origin ${dependency.migration.branch}
+            git clone git@github.com:workshop-80s/migration.git ${{ dir }}
+            cd ./${{ dir }}
+            git checkout init
+            git pull origin init
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
