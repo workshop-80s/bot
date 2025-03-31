@@ -1,6 +1,6 @@
 version: 2.1
 
-simple-anchor: &hw "echo Hello World"
+cmd: &cmd "echo Hello World"
 
 # name: &migration_name "w8s-migration"
 # branch: &migration_branch init
@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run: 
           name: "list dir"
-          command: &hw
+          command: &cmd
       # - run:
       #     name: Setup github
       #     command: |
