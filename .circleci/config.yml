@@ -1,5 +1,6 @@
-variable:
+variables:
   ssh_key: j3ns_devops
+  dir: w8s-migration
   dependency: 
     migration:
       url: git@github.com:workshop-80s/migration.git
@@ -29,10 +30,10 @@ jobs:
       - run: 
           name: "clone migration"
           command: | 
-            git clone git@github.com:workshop-80s/migration.git ${{ variable.dependency.migration.dir }}
-            cd ./${{ variable.dependency.migration.dir }}
-            git checkout ${{ variable.dependency.migration.branch }}
-            git pull origin ${{ variable.dependency.migration.branch }}
+            git clone git@github.com:workshop-80s/migration.git ${dir}
+            cd ./${dir}
+            git checkout ${dependency.migration.branch}
+            git pull origin ${dependency.migration.branch}
   # test:  
   #   docker:
   #     - image: cimg/base:2023.03
