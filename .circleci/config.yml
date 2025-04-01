@@ -75,7 +75,6 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     steps:
-      - checkout
       # - run:
       #     name: mysql client (optional)
       #     command: |
@@ -95,15 +94,13 @@ jobs:
           name: "run migration"
           command: |
             cd ~/project/<< pipeline.parameters.migration_dir >>
-            ls -la
             go run main.go migration --env test up
       - run: 
           name: "run seeder"
           command: |
-            # cd ~/project/<< pipeline.parameters.migration_dir >>
-            pwd
-            # go run main.go migration --env test up
-            # go run main.go seed --env test up
+            cd ~/project/<< pipeline.parameters.migration_dir >>
+            go run main.go seed --env test up
+      - checkout
 workflows:
   build_test:
     jobs:
