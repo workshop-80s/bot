@@ -22,13 +22,21 @@ parameters:
 jobs:
   build:
     docker:
-      - image: cimg/go:<< pipeline.parameters.go_version >>
-      - image: cimg/mysql:<< pipeline.parameters.mysql_version >>
-        environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: buzz_test
-        command: mysqld --default-authentication-plugin=mysql_native_password --sql-mode=''
+      - image: mysql:8  # MySQL service container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: buzz_test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    steps:
+      - run:
+          name: Wait for MySQL to be ready
+          command: |
+            until mysql -h mysql -u root -root -e 'SELECT 1'; do
+              echo "Waiting for MySQL to be available..."
+              sleep 5
+            done
 
 
   dependency:
@@ -56,12 +64,12 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod download
-      - run: 
-          name: "run migration"
-          command: |
-            cd $migration_dir
-            ls -la
-            go run main.go migration up
+      # - run: 
+      #     name: "run migration"
+      #     command: |
+      #       cd $migration_dir
+      #       ls -la
+      #       go run main.go migration up
   build2:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
