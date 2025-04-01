@@ -42,10 +42,10 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             git branch
-            ls -la
-      # - run: 
-      #     name: "build migration"
-      #     command: go mod download
+      - run: 
+          name: "build migration"
+          # command: go mod download
+          command: ls -la
   build:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
