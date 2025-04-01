@@ -19,38 +19,61 @@ parameters:
     default: *migration_branch
     type: string
 
-
-executors:
-  main:
-    working_directory: ~/project
+jobs:
+  # build:
+  #   docker:
+  #     # - image: cimg/go:<< pipeline.parameters.go_version >>
+  #     - image: cimg/base:2021.04
+  #     - image: cimg/mysql:8.0
+  #       environment:
+  #         # MYSQL_ROOT_PASSWORD: root
+  #         MYSQL_DATABASE: buzz_test
+  #         MYSQL_ALLOW_EMPTY_PASSWORD: yes
+  #       command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  #   steps:
+  #     - run:
+  #         name: mysql tool
+  #         command: |
+  #           sudo apt-get update
+  #           sudo apt-get install -y default-mysql-client
+  #     - run:
+  #         name: Wait for MySQL to ready
+  #         command: |
+  #           for i in `seq 1 10`;
+  #           do
+  #             nc -z 127.0.0.1 3306 && echo "MySQL is ready" && break
+  #             echo "Waiting for MySQL..."
+  #             sleep 5
+  #           done
+  #     # - run:
+  #     #     name: mysql tool
+  #     #     command: |
+  #     #       mysql -u root -h 127.0.0.1 buzz_test -e "SELECT 1;"
+  #     #       # mysql -h $MYSQL_HOST -u $MYSQL_USER -p"$MYSQL_PASSWORD" $MYSQL_DATABASE -e "SELECT 1;"
+  #     #       # Add your test commands here
+  
+  dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
-      - image: circleci/mysql:8
+      - image: cimg/mysql:8.0
         environment:
           MYSQL_DATABASE: buzz_test
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        command: |
-          mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode=''
-jobs:
-  build:
-    executor: main
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
     environment:
       ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
       migration_dir: w8s-migration
       migration_git: git@github.com:workshop-80s/migration.git
+      
     steps:
       - run:
-          name: Wait for the database to start
-          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
-      # - run:
-      #     name: mysql tool
-      #     command: |
-      #       sudo apt-get update
-      #       sudo apt-get install -y default-mysql-client
-      #       mysql -u root -h localhost buzz_test -e "SELECT 1;"
-      #       # mysql -h $MYSQL_HOST -u $MYSQL_USER -p"$MYSQL_PASSWORD" $MYSQL_DATABASE -e "SELECT 1;"
-      #       # Add your test commands here
+          name: mysql tool
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y default-mysql-client
+            mysql -u root -h localhost buzz_test -e "SELECT 1;"
       - run:
           name: setup github
           command: |
@@ -66,7 +89,7 @@ jobs:
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
-            go mod tidy
+            go mod download
       - run: 
           name: "run migration"
           command: |
@@ -84,10 +107,10 @@ jobs:
 workflows:
   initiate:
     jobs:
-      - build
-      # - dependency:
-      #     context:
-      #       - github
+      # - build
+      - dependency:
+          context:
+            - github
           # requires:
           #   - build
       # - test:
