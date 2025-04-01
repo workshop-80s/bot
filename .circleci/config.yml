@@ -12,6 +12,9 @@ parameters:
   migration_branch:
     default: *migration_branch
     type: string
+  migration_dir:
+    default: "w8s-migration"
+    type: string
 
 # executors:
 #   minimum:
@@ -74,27 +77,27 @@ jobs:
     steps:
       - checkout
       # - run:
-      #     name: mysql tool
+      #     name: mysql client (optional)
       #     command: |
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
-      # - run:
-      #     name: Waiting for MySQL to be ready
-      #     command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - run:
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - attach_workspace:
           at: ~/project
       - run: 
-          name: "xxxxxxxxxxxx"
+          name: "check var"
           command: |
             pwd
             ls -la
       - run: 
           name: "run migration"
           command: |
-            cd ~/project/w8s-migration
+            cd ~/project/<< pipeline.parameters.migration_branch >>
             ls -la
             go run main.go migration --env test up
-
+            go run main.go seed --env test up
 workflows:
   build_test:
     jobs:
