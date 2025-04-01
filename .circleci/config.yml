@@ -85,10 +85,10 @@ jobs:
 workflows:
   initiate:
     jobs:
-      # - build
-      - dependency:
-          context:
-            - github
+      - build
+      # - dependency:
+      #     context:
+      #       - github
           # requires:
           #   - build
       # - test:
