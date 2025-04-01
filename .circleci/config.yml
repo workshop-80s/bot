@@ -25,6 +25,7 @@ jobs:
       # - image: cimg/go:<< pipeline.parameters.go_version >>
       - image: cimg/base:2021.04
       - image: cimg/mysql:8.0
+        network_mode: bridge
         environment:
           # MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: buzz_test
@@ -56,6 +57,8 @@ jobs:
   dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
+        network_mode: bridge
+
     environment:
       ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
