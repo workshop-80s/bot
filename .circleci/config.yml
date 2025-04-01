@@ -55,6 +55,12 @@ jobs:
   dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
+      - image: cimg/mysql:8.0
+        environment:
+          # MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: buzz_test
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
     environment:
       ssh: << pipeline.parameters.ssh >>
@@ -70,7 +76,7 @@ jobs:
       - run:
           name: mysql tool
           command: |
-            mysql -u root -h mysql buzz_test -e "SELECT 1;"
+            mysql -u root -h localhost buzz_test -e "SELECT 1;"
             # mysql -h $MYSQL_HOST -u $MYSQL_USER -p"$MYSQL_PASSWORD" $MYSQL_DATABASE -e "SELECT 1;"
             # Add your test commands here
       - run:
@@ -94,7 +100,7 @@ jobs:
           command: |
             cd $migration_dir
             ls -la
-            # go run main.go migration up
+            go run main.go migration up
 
   test:  
     docker:
