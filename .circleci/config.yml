@@ -15,18 +15,12 @@ parameters:
   migration_dir:
     default: "w8s-migration"
     type: string
-
-executors:
-  minimum:
-    docker:
-      - image: cimg/go:1.23
-  main:
-    docker:
-      - image: cimg/mysql:8.0
-        environment:
-          MYSQL_DATABASE: buzz_test
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  migration_git:
+    default: "git@github.com:workshop-80s/migration.git"
+    type: string
+  database_buzz:
+    default: "buzz_test"
+    type: string
 
 jobs:
   setup:
@@ -36,8 +30,8 @@ jobs:
     environment:
       ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
-      migration_dir: w8s-migration
-      migration_git: git@github.com:workshop-80s/migration.git
+      migration_dir: << pipeline.parameters.migration_dir >>
+      migration_git: << pipeline.parameters.migration_git >>
     steps:
       - run:
           name: setup github
@@ -48,22 +42,17 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
-          name: "migration (branch: << pipeline.parameters.migration_branch >>)"
+          name: "migration (<< pipeline.parameters.migration_branch >>)"
           command: | 
             git clone $migration_git $migration_dir
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod vendor
-      - run: 
-          name: "ls"
-          command: |
-            pwd
-            ls -la
       - persist_to_workspace:
           root: "."
           paths:
-            - "*"
+            - $migration_dir
 
   build:
     working_directory: ~/project
@@ -71,7 +60,7 @@ jobs:
       - image: cimg/go:1.23
       - image: cimg/mysql:8.0
         environment:
-          MYSQL_DATABASE: buzz_test
+          MYSQL_DATABASE: << pipeline.parameters.database_buzz >>
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     steps:
@@ -99,7 +88,7 @@ jobs:
       - run: 
           name: "run seeder"
           command: |
-            cd ~/project/<< pipeline.parameters.migration_dir >>
+            cd << pipeline.parameters.migration_dir >>
             go run main.go seed --env test up
 workflows:
   build_test:
