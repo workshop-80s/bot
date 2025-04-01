@@ -44,6 +44,10 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y default-mysql-client
+      - run:
+          name: mysql tool
+          command: |
+            mysql -uroot -proot
 
   dependency:
     docker:
