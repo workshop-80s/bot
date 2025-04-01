@@ -52,7 +52,7 @@ jobs:
       - persist_to_workspace:
           root: "."
           paths:
-            - $migration_dir
+            - "<< pipeline.parameters.migration_dir >>"
 
   build:
     working_directory: ~/project
