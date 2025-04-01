@@ -69,14 +69,14 @@ jobs:
 
     steps:
       - run:
-          name: Waiting for MySQL to be ready
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-      - run:
           name: mysql tool
           command: |
             sudo apt-get update
             sudo apt-get install -y default-mysql-client
-            mysql -u root -h localhost buzz_test -e "SELECT 1;"
+      - run:
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      
       - run:
           name: setup github
           command: |
