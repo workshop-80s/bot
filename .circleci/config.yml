@@ -1,121 +1,44 @@
-# https://circleci.com/docs/configuration-reference/
-# https://circleci.com/docs/reusing-config/#parameter-syntax
-
 version: 2.1
 
-migration_branch: &migration_branch init
-
-parameters:
-  mysql_version:
-    default: "8.0"
-    type: string
-  go_version:
-    default: "1.23"
-    type: string
-  ssh: 
-    type: string
-    default: j3ns_devops
-  migration_branch:
-    default: *migration_branch
-    type: string
-
 jobs:
-  build:
+  test:
     docker:
-      # - image: cimg/go:<< pipeline.parameters.go_version >>
-      - image: cimg/base:2021.04
-      - image: cimg/mysql:8.0
+      - image: circleci/golang:1.21
         environment:
-          # MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: buzz_test
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    steps:
-      - run:
-          name: mysql tool
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y default-mysql-client
-      - run:
-          name: Wait for MySQL to ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z 127.0.0.1 3306 && echo "MySQL is ready" && break
-              echo "Waiting for MySQL..."
-              sleep 5
-            done
-      - run:
-          name: mysql tool
-          command: |
-            mysql -u root -h 127.0.0.1 buzz_test -e "SELECT 1;"
-            # mysql -h $MYSQL_HOST -u $MYSQL_USER -p"$MYSQL_PASSWORD" $MYSQL_DATABASE -e "SELECT 1;"
-            # Add your test commands here
-  
-  dependency:
-    docker:
-      - image: cimg/go:<< pipeline.parameters.go_version >>
-      - image: cimg/mysql:8.0
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+      - image: mysql:8.0
         environment:
-          # MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: buzz_test
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-
-    environment:
-      ssh: << pipeline.parameters.ssh >>
-      migration_branch: << pipeline.parameters.migration_branch >>
-      migration_dir: w8s-migration
-      migration_git: git@github.com:workshop-80s/migration.git
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpass
+    working_directory: /go/src/github.com/yourusername/yourproject
     steps:
-      - run:
-          name: mysql tool
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y default-mysql-client
-            mysql -u root -h localhost buzz_test -e "SELECT 1;"
-            # mysql -h $MYSQL_HOST -u $MYSQL_USER -p"$MYSQL_PASSWORD" $MYSQL_DATABASE -e "SELECT 1;"
-            # Add your test commands here
-      - run:
-          name: setup github
-          command: |
-            mkdir -p ~/.ssh 
-            echo "$$ssh" > ~/.ssh/id_rsa
-            
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: 
-          name: "clone migration (branch: << pipeline.parameters.migration_branch >>)"
-          command: | 
-            git clone $migration_git $migration_dir
-            cd $migration_dir
-            git checkout $migration_branch
-            git pull origin $migration_branch
-            go mod download
-      - run: 
-          name: "run migration"
-          command: |
-            cd $migration_dir
-            ls -la
-            go run main.go migration up
-
-  test:  
-    docker:
-      - image: cimg/base:2023.03
-    steps:
-      - checkout              
-      - run: echo "test hello world"
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run: go mod download
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run: |
+          # Wait for MySQL to be ready
+          for i in `seq 1 10`;
+          do
+            nc -z 127.0.0.1 3306 && echo "MySQL is ready" && break
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+      - run: go test -v ./...
 
 workflows:
-  initiate:
+  version: 2
+  test:
     jobs:
-      # - build
-      - dependency:
-          context:
-            - github
-          # requires:
-          #   - build
-      # - test:
-      #     requires:
-      #       - build
-
+      - test
