@@ -26,7 +26,7 @@ jobs:
       - image: cimg/base:2021.04
       - image: cimg/mysql:8.0
         environment:
-          MYSQL_ROOT_PASSWORD: root
+          # MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: buzz_test
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -47,6 +47,10 @@ jobs:
               echo "Waiting for MySQL..."
               sleep 5
             done
+      - run:
+          name: mysql tool
+          command: |
+            mysql -uroot -h 127.0.0.1 buzz_test
 
   dependency:
     docker:
