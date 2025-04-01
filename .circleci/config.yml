@@ -51,7 +51,7 @@ jobs:
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
-            go mod tidy
+            go mod vendor
       - run: 
           name: "ls"
           command: |
@@ -78,9 +78,9 @@ jobs:
       #     command: |
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
-      - run:
-          name: Waiting for MySQL to be ready
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      # - run:
+      #     name: Waiting for MySQL to be ready
+      #     command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - attach_workspace:
           at: ~/project
       - run: 
