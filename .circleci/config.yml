@@ -80,6 +80,7 @@ jobs:
       #     command: |
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
+      - checkout
       - run:
           name: Waiting for MySQL to be ready
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
@@ -100,7 +101,6 @@ jobs:
           command: |
             cd ~/project/<< pipeline.parameters.migration_dir >>
             go run main.go seed --env test up
-      - checkout
 workflows:
   build_test:
     jobs:
