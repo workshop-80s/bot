@@ -42,7 +42,7 @@ jobs:
       - run:
           name: mysql tool
           command: |
-            apt-get install mysql-client
+            sudo apt-get install mysql-client
 
   dependency:
     docker:
