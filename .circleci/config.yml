@@ -58,7 +58,7 @@ jobs:
             pwd
             ls -la
       - persist_to_workspace:
-          root: "."
+          root: ""
           paths:
             - $migration_dir
 
