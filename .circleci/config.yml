@@ -6,6 +6,9 @@ version: 2.1
 migration_branch: &migration_branch init
 
 parameters:
+  migration_branch:
+    default: *migration_branch
+    type: string
   go_version:
     default: "1.23"
     type: string
@@ -55,7 +58,7 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
-          name: "clone migration ($migration_branch)"
+          name: "clone migration $($migration_branch) (<< pipeline.parameters.migration_branch >>)"
           command: | 
             git clone $migration_git $migration_dir
             cd $migration_dir
