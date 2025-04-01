@@ -1,0 +1,15 @@
+with-expecter: false
+inpackage: true
+filename: "{{.InterfaceNameLower}}_mock.go"
+mockname: "{{.InterfaceName}}Mock"
+outpkg: "{{.PackageName}}"
+dir: "{{.InterfaceDir}}"
+packages:
+    bot/domain/article:
+        config:
+            all: true
+    bot/domain/subscribe/repository:
+        config:
+            all: true
+        # interfaces: # want to specify the interface want to be generated
+        #     Product:

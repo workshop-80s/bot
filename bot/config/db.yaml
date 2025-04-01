@@ -1,0 +1,16 @@
+dev:
+  dialect: mysql
+  username: root
+  password: 
+  host: localhost
+  port: 3306
+  database: buzz
+
+test:
+  dialect: mysql
+  username: root
+  password: 
+  host: localhost
+  port: 3306
+  database: buzz_test
+
