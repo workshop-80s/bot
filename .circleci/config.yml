@@ -74,12 +74,12 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod download
-      # - run: 
-      #     name: "run migration"
-      #     command: |
-      #       cd $migration_dir
-      #       ls -la
-      #       go run main.go migration up
+      - run: 
+          name: "run migration"
+          command: |
+            cd $migration_dir
+            ls -la
+            go run main.go migration up
   build2:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
