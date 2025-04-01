@@ -76,7 +76,6 @@ jobs:
       - run:
           name: Waiting for MySQL to be ready
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
-      
       - run:
           name: setup github
           command: |
@@ -98,7 +97,7 @@ jobs:
           command: |
             cd $migration_dir
             ls -la
-            go run main.go migration up
+            go run main.go migration --env test up
 
   test:  
     docker:
