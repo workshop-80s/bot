@@ -69,8 +69,8 @@ jobs:
 
     steps:
       - run:
-        name: Waiting for MySQL to be ready
-        command: dockerize -wait tcp://localhost:3306 -timeout 1m
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
           name: mysql tool
           command: |
