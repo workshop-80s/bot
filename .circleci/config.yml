@@ -30,8 +30,7 @@ executors:
           MYSQL_DATABASE: buzz_test
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: |
-          mysqld --default-authentication-plugin=mysql_native_password --sql-mode=''
-          mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+          mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode=''
 jobs:
   build:
     executor: main
