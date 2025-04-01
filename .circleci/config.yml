@@ -49,6 +49,7 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod vendor
+      - checkout
       - persist_to_workspace:
           root: "."
           paths:
