@@ -6,12 +6,6 @@ version: 2.1
 migration_branch: &migration_branch init
 
 parameters:
-  mysql_version:
-    default: "8.0"
-    type: string
-  go_version:
-    default: "1.23"
-    type: string
   ssh: 
     type: string
     default: j3ns_devops
@@ -33,9 +27,9 @@ parameters:
 
 jobs:
   setup:
-    working_directory: ~/project
+    # working_directory: ~/project
     docker:
-      - image: cimg/go:<< pipeline.parameters.go_version >>
+      - image: cimg/go:1.23
     environment:
       ssh: << pipeline.parameters.ssh >>
       environment:
@@ -59,14 +53,14 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod tidy
-      - persist_to_workspace:
-          root: .
+      # - persist_to_workspace:
+      #     root: .
           # paths:
           #   - project
 
   build:
     docker:
-      - image: cimg/go:<< pipeline.parameters.go_version >>
+      - image: cimg/go:1.23
       - image: cimg/mysql:8.0
         environment:
           MYSQL_DATABASE: buzz_test
