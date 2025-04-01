@@ -26,7 +26,7 @@ parameters:
     type: string
 
 jobs:
-  setup:
+  build:
     working_directory: ~/project
     docker:
       - image: cimg/go:1.23
@@ -64,7 +64,7 @@ jobs:
             - "*"
             - "<< pipeline.parameters.migration_dir >>"
 
-  build:
+  test:
     environment:
       ENV: test
     working_directory: ~/project
@@ -106,10 +106,10 @@ jobs:
 workflows:
   build_test:
     jobs:
-      - setup:
+      - build:
           context:
             - github
-      - build:
+      - test:
           requires:
-            - setup
+            - build
 
