@@ -43,9 +43,10 @@ jobs:
             git pull origin $migration_branch
             git branch
       - run: 
-          name: "build migrationxx"
-          # command: go mod download
-          command: ls -la
+          name: "build migration"
+          command: |
+            cd $migration_dir
+            go mod download
   build:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
