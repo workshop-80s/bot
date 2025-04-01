@@ -22,7 +22,8 @@ parameters:
 jobs:
   build:
     docker:
-      - image: cimg/go:<< pipeline.parameters.go_version >>
+      # - image: cimg/go:<< pipeline.parameters.go_version >>
+      - image: cimg/base:2021.04
       - image: cimg/mysql:8.0
         environment:
           MYSQL_ROOT_PASSWORD: root
@@ -38,6 +39,10 @@ jobs:
               echo "Waiting for MySQL..."
               sleep 5
             done
+      - run:
+          name: mysql tool
+          command: |
+            apt-get install mysql-client
 
   dependency:
     docker:
