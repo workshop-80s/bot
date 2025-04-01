@@ -54,8 +54,8 @@ jobs:
             git pull origin $migration_branch
             go mod tidy
       - persist_to_workspace:
-          root: .
-          # paths:
+          root: "."
+          # paths":
           #   - project
 
   build:
