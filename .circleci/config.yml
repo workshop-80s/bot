@@ -3,7 +3,7 @@
 
 version: 2.1
 
-migration_branch: &migration_branch initiate
+migration_branch: &migration_branch init
 
 parameters:
   go_version:
@@ -64,9 +64,10 @@ jobs:
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
-      - run: 
-          name: "build migration"
-          command: go mod download
+            git branch
+      # - run: 
+      #     name: "build migration"
+      #     command: go mod download
   test:  
     docker:
       - image: cimg/base:2023.03
