@@ -20,39 +20,7 @@ parameters:
     type: string
 
 jobs:
-  # build:
-  #   docker:
-  #     # - image: cimg/go:<< pipeline.parameters.go_version >>
-  #     - image: cimg/base:2021.04
-  #     - image: cimg/mysql:8.0
-  #       environment:
-  #         # MYSQL_ROOT_PASSWORD: root
-  #         MYSQL_DATABASE: buzz_test
-  #         MYSQL_ALLOW_EMPTY_PASSWORD: yes
-  #       command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-  #   steps:
-  #     - run:
-  #         name: mysql tool
-  #         command: |
-  #           sudo apt-get update
-  #           sudo apt-get install -y default-mysql-client
-  #     - run:
-  #         name: Wait for MySQL to ready
-  #         command: |
-  #           for i in `seq 1 10`;
-  #           do
-  #             nc -z 127.0.0.1 3306 && echo "MySQL is ready" && break
-  #             echo "Waiting for MySQL..."
-  #             sleep 5
-  #           done
-  #     # - run:
-  #     #     name: mysql tool
-  #     #     command: |
-  #     #       mysql -u root -h 127.0.0.1 buzz_test -e "SELECT 1;"
-  #     #       # mysql -h $MYSQL_HOST -u $MYSQL_USER -p"$MYSQL_PASSWORD" $MYSQL_DATABASE -e "SELECT 1;"
-  #     #       # Add your test commands here
-  
-  dependency:
+  build_infra:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
       - image: cimg/mysql:8.0
@@ -61,6 +29,25 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+    steps:
+      - run:
+          name: mysql tool
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y default-mysql-client
+      - run:
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+  
+  pull_dependency:
+    docker:
+      - image: cimg/go:<< pipeline.parameters.go_version >>
+      # - image: cimg/mysql:8.0
+      #   environment:
+      #     MYSQL_DATABASE: buzz_test
+      #     MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      #   command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
     environment:
       ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
@@ -68,11 +55,11 @@ jobs:
       migration_git: git@github.com:workshop-80s/migration.git
 
     steps:
-      - run:
-          name: mysql tool
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y default-mysql-client
+      # - run:
+      #     name: mysql tool
+      #     command: |
+      #       sudo apt-get update
+      #       sudo apt-get install -y default-mysql-client
       - run:
           name: Waiting for MySQL to be ready
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
@@ -109,12 +96,12 @@ jobs:
 workflows:
   initiate:
     jobs:
-      # - build
-      - dependency:
+      - build_infra
+      - pull_dependency:
           context:
             - github
-          # requires:
-          #   - build
+          requires:
+            - build_infra
       # - test:
       #     requires:
       #       - build
