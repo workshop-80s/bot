@@ -53,13 +53,16 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod tidy
+      - run: 
+          name: "ls"
+          command: |
+            pwd
+            ls -la
       - persist_to_workspace:
           root: "."
           paths:
             - '*'
             - '.*'
-          # paths":
-          #   - project
 
   build:
     docker:
