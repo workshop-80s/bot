@@ -33,12 +33,12 @@ jobs:
       migration_dir: << pipeline.parameters.migration_dir >>
       migration_git: << pipeline.parameters.migration_git >>
     steps:
+      - checkout
       - run:
           name: setup github
           command: |
             mkdir -p ~/.ssh 
             echo "$$ssh" > ~/.ssh/id_rsa
-            
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
@@ -49,7 +49,7 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod vendor
-      - checkout
+      
       - persist_to_workspace:
           root: "."
           paths:
