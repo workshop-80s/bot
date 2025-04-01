@@ -32,11 +32,16 @@ parameters:
 #         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
 jobs:
-  setup_github:
+  setup:
+    working_directory: ~/project
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
     environment:
       ssh: << pipeline.parameters.ssh >>
+      environment:
+      migration_branch: << pipeline.parameters.migration_branch >>
+      migration_dir: w8s-migration
+      migration_git: git@github.com:workshop-80s/migration.git
     steps:
       - run:
           name: setup github
@@ -46,8 +51,16 @@ jobs:
             
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run: 
+          name: "migration (branch: << pipeline.parameters.migration_branch >>)"
+          command: | 
+            git clone $migration_git $migration_dir
+            cd $migration_dir
+            git checkout $migration_branch
+            git pull origin $migration_branch
+            go mod tidy
       - persist_to_workspace:
-          root: "~/.ssh"
+          root: .
 
   build:
     docker:
@@ -57,42 +70,22 @@ jobs:
           MYSQL_DATABASE: buzz_test
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    environment:
-      migration_branch: << pipeline.parameters.migration_branch >>
-      migration_dir: w8s-migration
-      migration_git: git@github.com:workshop-80s/migration.git
     steps:
-      - attach_workspace:
-          at: "~/.ssh"
-      - run:
-          name: ssh
-          command: |
-            ls -la ~
-            ls -la ~/.ssh
       # - run:
       #     name: mysql tool
       #     command: |
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
+      - attach_workspace:
+          at: ~/project
+      - run: 
+          name: "xxxxxxxxxxxx"
+          command: |
+            ls -la
       - run:
           name: Waiting for MySQL to be ready
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
-      # - run:
-      #     name: setup github
-      #     command: |
-      #       mkdir -p ~/.ssh 
-      #       echo "$$ssh" > ~/.ssh/id_rsa
-            
-      #       chmod 600 ~/.ssh/id_rsa
-      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: 
-          name: "clone migration (branch: << pipeline.parameters.migration_branch >>)"
-          command: | 
-            git clone $migration_git $migration_dir
-            cd $migration_dir
-            git checkout $migration_branch
-            git pull origin $migration_branch
-            go mod tidy
+
       - run: 
           name: "run migration"
           command: |
