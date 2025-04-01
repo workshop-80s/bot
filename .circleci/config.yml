@@ -58,7 +58,7 @@ jobs:
             pwd
             ls -la
       - persist_to_workspace:
-          root: ""
+          root: "~/main"
           paths:
             - $migration_dir
 
@@ -73,6 +73,7 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     steps:
+      - checkout
       # - run:
       #     name: mysql tool
       #     command: |
