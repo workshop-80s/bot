@@ -22,7 +22,7 @@ parameters:
 jobs:
   build:
     docker:
-      - image: cimg/golang:1.19
+      - image: cimg/go:<< pipeline.parameters.go_version >>
       - image: cimg/mysql:8.0
         environment:
           MYSQL_ROOT_PASSWORD: root
