@@ -96,10 +96,10 @@ jobs:
 workflows:
   build_test:
     jobs:
-      - setup_github
+      - setup
       - build:
           context:
             - github
           requires:
-            - setup_github
+            - setup
 
