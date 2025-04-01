@@ -78,6 +78,9 @@ jobs:
       #     command: |
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
+      - run:
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - attach_workspace:
           at: ~/project
       - run: 
@@ -85,14 +88,10 @@ jobs:
           command: |
             pwd
             ls -la
-      - run:
-          name: Waiting for MySQL to be ready
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-
       - run: 
           name: "run migration"
           command: |
-            cd $migration_dir
+            cd ~/project/$migration_dir
             ls -la
             go run main.go migration --env test up
 
