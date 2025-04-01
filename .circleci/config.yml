@@ -17,9 +17,19 @@ parameters:
     default: j3ns_devops
 
 jobs:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: buzz_test
+    ports:
+      - 3306:3306
+
   dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
+    services:
+      - mysql
     environment:
       ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
@@ -41,12 +51,13 @@ jobs:
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
-            git branch
+            go mod download
       - run: 
-          name: "build migration"
+          name: "run migration"
           command: |
             cd $migration_dir
-            go mod download
+            ls -la
+            go run main.go migration up
   build:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
@@ -65,6 +76,7 @@ jobs:
       # - run:
       #     name: Build Application
       #     command: go build -v ./...
+  
   test:  
     docker:
       - image: cimg/base:2023.03
