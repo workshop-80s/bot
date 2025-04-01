@@ -16,17 +16,17 @@ parameters:
     default: "w8s-migration"
     type: string
 
-# executors:
-#   minimum:
-#     docker:
-#       - image: cimg/go:1.23
-#   main:
-#     docker:
-#       - image: cimg/mysql:8.0
-#         environment:
-#           MYSQL_DATABASE: buzz_test
-#           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-#         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+executors:
+  minimum:
+    docker:
+      - image: cimg/go:1.23
+  main:
+    docker:
+      - image: cimg/mysql:8.0
+        environment:
+          MYSQL_DATABASE: buzz_test
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
 jobs:
   setup:
