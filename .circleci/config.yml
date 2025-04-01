@@ -38,19 +38,19 @@ jobs:
     steps:
       - checkout
       - run: 
-          name: "install"
+          name: "Install package"
           command: | 
             cd << pipeline.parameters.pkg_dir >>
             go mod vendor
       - run:
-          name: setup github
+          name: Setup github authenticate
           command: |
             mkdir -p ~/.ssh 
             echo "$$ssh" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
-          name: "migration (<< pipeline.parameters.migration_branch >>)"
+          name: "Pull migration (<< pipeline.parameters.migration_branch >>)"
           command: | 
             git clone $migration_git $migration_dir
             cd $migration_dir
@@ -88,22 +88,17 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run: 
-          name: "check var"
-          command: |
-            pwd
-            ls -la
-      - run: 
-          name: "run migration"
+          name: "Migrate database"
           command: |
             cd << pipeline.parameters.migration_dir >>
             go run main.go migration --env test up
       - run: 
-          name: "run seeder"
+          name: "Seed data"
           command: |
             cd << pipeline.parameters.migration_dir >>
             go run main.go seed --env test up
       - run: 
-          name: "unit test"
+          name: "Unit test"
           command: |
             cd << pipeline.parameters.pkg_dir >>
             ENV=test go run main.go subscribe
