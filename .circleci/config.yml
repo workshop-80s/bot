@@ -97,7 +97,13 @@ jobs:
             cd ~/project/<< pipeline.parameters.migration_dir >>
             ls -la
             go run main.go migration --env test up
-            go run main.go seed --env test up
+      - run: 
+          name: "run seeder"
+          command: |
+            # cd ~/project/<< pipeline.parameters.migration_dir >>
+            pwd
+            # go run main.go migration --env test up
+            # go run main.go seed --env test up
 workflows:
   build_test:
     jobs:
