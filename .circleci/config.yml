@@ -94,7 +94,7 @@ jobs:
       - run: 
           name: "run migration"
           command: |
-            cd ~/project/<< pipeline.parameters.migration_dir >>
+            cd << pipeline.parameters.migration_dir >>
             go run main.go migration --env test up
       - run: 
           name: "run seeder"
