@@ -21,6 +21,9 @@ parameters:
   database_buzz:
     default: "buzz_test"
     type: string
+  pkg_dir:
+    default: "bot"
+    type: string
 
 jobs:
   setup:
@@ -34,6 +37,11 @@ jobs:
       migration_git: << pipeline.parameters.migration_git >>
     steps:
       - checkout
+      - run: 
+          name: "install"
+          command: | 
+            cd << pipeline.parameters.pkg_dir >>
+            go mod vendor
       - run:
           name: setup github
           command: |
