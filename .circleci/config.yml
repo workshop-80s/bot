@@ -66,8 +66,11 @@ jobs:
       migration_branch: << pipeline.parameters.migration_branch >>
       migration_dir: w8s-migration
       migration_git: git@github.com:workshop-80s/migration.git
-      
+
     steps:
+      - run:
+        name: Waiting for MySQL to be ready
+        command: dockerize -wait tcp://localhost:3306 -timeout 1m
       - run:
           name: mysql tool
           command: |
