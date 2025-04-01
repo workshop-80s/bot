@@ -3,7 +3,7 @@
 
 version: 2.1
 
-&migration_branch init
+migration_branch: &migration_branch initiate
 
 parameters:
   go_version:
