@@ -43,7 +43,7 @@ jobs:
             git pull origin $migration_branch
             git branch
       - run: 
-          name: "build migration"
+          name: "build migrationxx"
           # command: go mod download
           command: ls -la
   build:
