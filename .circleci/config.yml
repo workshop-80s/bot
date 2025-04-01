@@ -55,6 +55,9 @@ jobs:
             go mod tidy
       - persist_to_workspace:
           root: "."
+          paths:
+            - '*'
+            - '.*'
           # paths":
           #   - project
 
