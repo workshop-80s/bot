@@ -6,8 +6,8 @@ version: 2.1
 migration_branch: &migration_branch init
 
 parameters:
-  migration_branch:
-    default: *migration_branch
+  mysql_version:
+    default: "8.0"
     type: string
   go_version:
     default: "1.23"
@@ -15,15 +15,21 @@ parameters:
   ssh: 
     type: string
     default: j3ns_devops
+  migration_branch:
+    default: *migration_branch
+    type: string
 
 jobs:
-  mysql:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: buzz_test
-    ports:
-      - 3306:3306
+  build:
+    docker:
+      - image: cimg/go:<< pipeline.parameters.go_version >>
+      - image: cimg/mysql:<< pipeline.parameters.mysql_version >>
+        environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: buzz_test
+        command: mysqld --default-authentication-plugin=mysql_native_password --sql-mode=''
+
 
   dependency:
     docker:
@@ -58,7 +64,7 @@ jobs:
             cd $migration_dir
             ls -la
             go run main.go migration up
-  build:
+  build2:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
     steps:
