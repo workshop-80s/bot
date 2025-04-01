@@ -34,8 +34,6 @@ jobs:
   dependency:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
-    services:
-      - mysql
     environment:
       ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
@@ -93,10 +91,12 @@ jobs:
 workflows:
   initiate:
     jobs:
-      - dependency
       - build:
           context:
             - github
+      - dependency:
+          requires:
+            - build
       - test:
           requires:
             - build
