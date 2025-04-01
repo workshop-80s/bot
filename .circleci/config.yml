@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Wait for MySQL to be ready
           command: |
-            until mysql -h mysql -u root -root -e 'SELECT 1'; do
+            until mysql -h localhost -u root -root -e 'SELECT 1'; do
               echo "Waiting for MySQL to be available..."
               sleep 5
             done
