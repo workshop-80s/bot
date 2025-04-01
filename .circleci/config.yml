@@ -65,6 +65,8 @@ jobs:
             - "<< pipeline.parameters.migration_dir >>"
 
   build:
+    environment:
+      ENV: test
     working_directory: ~/project
     docker:
       - image: cimg/go:1.23
@@ -100,6 +102,12 @@ jobs:
           command: |
             cd << pipeline.parameters.migration_dir >>
             go run main.go seed --env test up
+      - run: 
+          name: "unit test"
+          command: |
+            cd << pipeline.parameters.pkg_dir >>
+            ENV=test go run main.go subscribe
+            
 workflows:
   build_test:
     jobs:
@@ -109,4 +117,7 @@ workflows:
       - build:
           requires:
             - setup
+      - test:
+          requires:
+            - build
 
