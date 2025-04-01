@@ -19,17 +19,17 @@ parameters:
     default: *migration_branch
     type: string
 
-executors:
-  minimum:
-    docker:
-      - image: cimg/go:1.23
-  main:
-    docker:
-      - image: cimg/mysql:8.0
-        environment:
-          MYSQL_DATABASE: buzz_test
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+# executors:
+#   minimum:
+#     docker:
+#       - image: cimg/go:1.23
+#   main:
+#     docker:
+#       - image: cimg/mysql:8.0
+#         environment:
+#           MYSQL_DATABASE: buzz_test
+#           MYSQL_ALLOW_EMPTY_PASSWORD: yes
+#         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
 jobs:
   setup_github:
@@ -46,10 +46,10 @@ jobs:
             
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - persist_to_workspace:
-          # root: ~
-          paths:
-            - '.ssh'
+      # - persist_to_workspace:
+      #     root: ~
+      #     paths:
+      #       - '.ssh'
 
   build:
     docker:
