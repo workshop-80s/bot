@@ -20,7 +20,19 @@ parameters:
     type: string
 
 jobs:
-  build_infra:
+  setup_github:
+    environment:
+      ssh: << pipeline.parameters.ssh >>
+    steps:
+      - run:
+          name: setup github
+          command: |
+            mkdir -p ~/.ssh 
+            echo "$$ssh" > ~/.ssh/id_rsa
+            
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+  build:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
       - image: cimg/mysql:8.0
@@ -28,32 +40,10 @@ jobs:
           MYSQL_DATABASE: buzz_test
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-
-    steps:
-      - run:
-          name: mysql tool
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y default-mysql-client
-      - run:
-          name: Waiting for MySQL to be ready
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-  
-  pull_dependency:
-    docker:
-      - image: cimg/go:<< pipeline.parameters.go_version >>
-      # - image: cimg/mysql:8.0
-      #   environment:
-      #     MYSQL_DATABASE: buzz_test
-      #     MYSQL_ALLOW_EMPTY_PASSWORD: yes
-      #   command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-
     environment:
-      ssh: << pipeline.parameters.ssh >>
       migration_branch: << pipeline.parameters.migration_branch >>
       migration_dir: w8s-migration
       migration_git: git@github.com:workshop-80s/migration.git
-
     steps:
       # - run:
       #     name: mysql tool
@@ -63,14 +53,14 @@ jobs:
       - run:
           name: Waiting for MySQL to be ready
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
-      - run:
-          name: setup github
-          command: |
-            mkdir -p ~/.ssh 
-            echo "$$ssh" > ~/.ssh/id_rsa
+      # - run:
+      #     name: setup github
+      #     command: |
+      #       mkdir -p ~/.ssh 
+      #       echo "$$ssh" > ~/.ssh/id_rsa
             
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      #       chmod 600 ~/.ssh/id_rsa
+      #       ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
           name: "clone migration (branch: << pipeline.parameters.migration_branch >>)"
           command: | 
@@ -78,7 +68,7 @@ jobs:
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
-            go mod download
+            go mod tidy
       - run: 
           name: "run migration"
           command: |
