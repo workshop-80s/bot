@@ -60,9 +60,11 @@ jobs:
       - persist_to_workspace:
           root: "."
           paths:
-            - '*'
+            - $migration_dir
 
   build:
+    working_directory: /main
+
     docker:
       - image: cimg/go:1.23
       - image: cimg/mysql:8.0
@@ -76,16 +78,13 @@ jobs:
       #     command: |
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
-      # - attach_workspace:
-      #     at: /project
       - attach_workspace:
-          at: ~/main
+          at: /main/w8s-migration
       - run: 
           name: "xxxxxxxxxxxx"
           command: |
             pwd
             ls -la
-            ls -la ~/taotest
       - run:
           name: Waiting for MySQL to be ready
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
