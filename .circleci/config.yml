@@ -21,7 +21,7 @@ parameters:
 
 executors:
   minimal:
-    - image: cimg/go:<< pipeline.parameters.go_version >>
+    - image: cimg/go:1.23
   main:
     docker:
       - image: cimg/mysql:8.0
