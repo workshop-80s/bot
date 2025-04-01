@@ -84,14 +84,14 @@ jobs:
       - run: echo "test hello world"
 
 workflows:
-  initiate:
+  test:
     jobs:
-      - build_infra
-      - pull_dependency:
+      - setup_github
+      - build:
           context:
             - github
           requires:
-            - build_infra
+            - setup_github
       # - test:
       #     requires:
       #       - build
