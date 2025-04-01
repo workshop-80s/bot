@@ -22,22 +22,15 @@ parameters:
 jobs:
   build:
     docker:
-      - image: mysql:8  # MySQL service container
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: buzz_test
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      - image: circleci/mysql:8.0
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: buzz_test
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
     steps:
       - run:
-          name: Wait for MySQL to be ready
-          command: |
-            until mysql -h localhost -u root -root -e 'SELECT 1'; do
-              echo "Waiting for MySQL to be available..."
-              sleep 5
-            done
-
+          name: Wait for the database to start
+          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
 
   dependency:
     docker:
@@ -99,10 +92,10 @@ jobs:
 workflows:
   initiate:
     jobs:
-      - build:
+      - build
+      - dependency:
           context:
             - github
-      - dependency:
           requires:
             - build
       - test:
