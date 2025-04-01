@@ -20,11 +20,6 @@ jobs:
   build:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
-    environment:
-      branch: *migration_branch
-      ssh: << pipeline.parameters.ssh >>
-      working_dir: w8s-migration
-      git: git@github.com:workshop-80s/migration.git
     steps:
       - checkout
       # - restore_cache:
@@ -44,8 +39,8 @@ jobs:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
     environment:
-      migration_branch: *migration_branch
       ssh: << pipeline.parameters.ssh >>
+      migration_branch: << pipeline.parameters.migration_branch >>
       migration_dir: w8s-migration
       migration_git: git@github.com:workshop-80s/migration.git
     steps:
@@ -58,13 +53,14 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
       - run: 
-          name: "clone migration $($migration_branch) (<< pipeline.parameters.migration_branch >>)"
+          name: "clone migration (branch: << pipeline.parameters.migration_branch >>)"
           command: | 
             git clone $migration_git $migration_dir
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
             git branch
+            ls -la
       # - run: 
       #     name: "build migration"
       #     command: go mod download
