@@ -63,8 +63,7 @@ jobs:
             - "*"
 
   build:
-    working_directory: /main
-
+    working_directory: ~/project
     docker:
       - image: cimg/go:1.23
       - image: cimg/mysql:8.0
@@ -80,7 +79,7 @@ jobs:
       #       sudo apt-get update
       #       sudo apt-get install -y default-mysql-client
       - attach_workspace:
-          at: ~/project/w8s-migration
+          at: ~/project
       - run: 
           name: "xxxxxxxxxxxx"
           command: |
