@@ -64,8 +64,8 @@ jobs:
       migration_dir: w8s-migration
       migration_git: git@github.com:workshop-80s/migration.git
     steps:
-      - attach_workspace:
-          at: ~
+      # - attach_workspace:
+      #     at: ~
       - run:
           name: ssh
           command: |
@@ -102,15 +102,8 @@ jobs:
             ls -la
             go run main.go migration --env test up
 
-  test:  
-    docker:
-      - image: cimg/base:2023.03
-    steps:
-      - checkout              
-      - run: echo "test hello world"
-
 workflows:
-  test:
+  build_test:
     jobs:
       - setup_github
       - build:
@@ -118,7 +111,4 @@ workflows:
             - github
           requires:
             - setup_github
-      # - test:
-      #     requires:
-      #       - build
 
