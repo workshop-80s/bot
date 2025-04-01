@@ -51,7 +51,7 @@ jobs:
             cd $migration_dir
             git checkout $migration_branch
             git pull origin $migration_branch
-           
+            go mod tidy
       - run: 
           name: "ls"
           command: |
@@ -93,7 +93,6 @@ jobs:
           command: |
             cd ~/project/w8s-migration
             ls -la
-            go mod tidy
             go run main.go migration --env test up
 
 workflows:
