@@ -27,7 +27,7 @@ parameters:
 
 jobs:
   setup:
-    working_directory: ~/taotest
+    working_directory: ~/main
     docker:
       - image: cimg/go:1.23
     environment:
@@ -61,7 +61,6 @@ jobs:
           root: "."
           paths:
             - '*'
-            - '.*'
 
   build:
     docker:
@@ -80,7 +79,7 @@ jobs:
       # - attach_workspace:
       #     at: /project
       - attach_workspace:
-          at: /taotest
+          at: ~/main
       - run: 
           name: "xxxxxxxxxxxx"
           command: |
