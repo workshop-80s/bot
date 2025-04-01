@@ -35,7 +35,7 @@ jobs:
       - run:
           name: mysql tool
           command: |
-            # sudo apt-get update
+            sudo apt-get update
             sudo apt-get install -y default-mysql-client
             ps aux | grep mysql
       - run:
