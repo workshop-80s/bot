@@ -27,7 +27,7 @@ parameters:
 
 jobs:
   setup:
-    working_directory: ~/project
+    working_directory: ~/taotest
     docker:
       - image: cimg/go:1.23
     environment:
@@ -53,8 +53,8 @@ jobs:
             git checkout $migration_branch
             git pull origin $migration_branch
             go mod tidy
-      # - persist_to_workspace:
-      #     root: .
+      - persist_to_workspace:
+          root: .
           # paths:
           #   - project
 
