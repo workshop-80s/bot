@@ -3,13 +3,15 @@
 
 version: 2.1
 
+&migration_branch init
+
 parameters:
   go_version:
     default: "1.23"
     type: string
-  migration_branch:
-    default: init
-    type: string
+  # migration_branch:
+  #   default: *
+  #   type: string
   ssh: 
     type: string
     default: j3ns_devops
@@ -19,7 +21,7 @@ jobs:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
     environment:
-      branch: << pipeline.parameters.migration_branch >>
+      branch: *migration_branch
       ssh: << pipeline.parameters.ssh >>
       working_dir: w8s-migration
       git: git@github.com:workshop-80s/migration.git
@@ -42,8 +44,8 @@ jobs:
     docker:
       - image: cimg/go:<< pipeline.parameters.go_version >>
     environment:
+      branch: *migration_branch
       ssh: << pipeline.parameters.ssh >>
-      migration_branch: << pipeline.parameters.migration_branch >>
       migration_dir: w8s-migration
       migration_git: git@github.com:workshop-80s/migration.git
     steps:
