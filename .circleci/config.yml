@@ -46,10 +46,10 @@ jobs:
             
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-      # - persist_to_workspace:
-      #     root: ~
-      #     paths:
-      #       - '.ssh'
+      - persist_to_workspace:
+          root: "~"
+          paths:
+            - '.ssh'
 
   build:
     docker:
