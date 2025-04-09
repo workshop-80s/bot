@@ -1,14 +1,14 @@
 package entity
 
 type Article struct {
-	id              int
-	mode            int
-	title           string
-	sapo            string
-	content         string
-	image           string
-	origin          string
-	articleSourceId int
+	id           int
+	mode         int
+	title        string
+	sapo         string
+	content      string
+	image        string
+	origin       string
+	articleHubId int
 }
 
 func NewArticle(
@@ -19,17 +19,17 @@ func NewArticle(
 	content string,
 	image string,
 	origin string,
-	articleSourceId int,
+	articleHubId int,
 ) Article {
 	return Article{
-		id:              id,
-		mode:            mode,
-		title:           title,
-		sapo:            sapo,
-		content:         content,
-		image:           image,
-		origin:          origin,
-		articleSourceId: articleSourceId,
+		id:           id,
+		mode:         mode,
+		title:        title,
+		sapo:         sapo,
+		content:      content,
+		image:        image,
+		origin:       origin,
+		articleHubId: articleHubId,
 	}
 }
 

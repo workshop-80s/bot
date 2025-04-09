@@ -1,10 +1,9 @@
 package model
 
 type Article struct {
-	ID              int    `gorm:"primary_key;column:id"`
-	Title           string `gorm:"column:title"`
-	Sapo            string `gorm:"column:sapo"`
-	ArticleSourceID int    `gorm:"column:article_source_id"`
+	ID    int    `gorm:"primary_key;column:id"`
+	Title string `gorm:"column:title"`
+	Sapo  string `gorm:"column:sapo"`
 }
 
 func (Article) TableName() string {

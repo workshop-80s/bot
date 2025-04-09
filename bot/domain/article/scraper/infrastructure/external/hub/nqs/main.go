@@ -10,7 +10,9 @@ import (
 	_ "bot/lib/file"
 )
 
-func CrawlTopPage(link string) []entity.Article {
+const domain = "https://nguoiquansat.vn"
+
+func CrawlTopPage() []entity.Article {
 	c := colly.NewCollector()
 
 	result := []entity.Article{}
@@ -58,7 +60,7 @@ func CrawlTopPage(link string) []entity.Article {
 		})
 	})
 
-	c.Visit(link)
+	c.Visit(domain)
 
 	return result
 }

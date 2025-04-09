@@ -89,10 +89,10 @@ func crawlTopPageMain(link string) []entity.Article {
 	return result
 }
 
-func CrawlTopPage(link string) []entity.Article {
-	result := crawlTopPageMain(link)
+func CrawlTopPage() []entity.Article {
+	result := crawlTopPageMain(domain)
 
-	r := crawlTopPageSlave(link + "/timelinehome/2.chn")
+	r := crawlTopPageSlave(domain + "/timelinehome/2.chn")
 	result = append(result, r...)
 
 	return result
