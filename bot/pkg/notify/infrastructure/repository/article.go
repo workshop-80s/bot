@@ -1,12 +1,10 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 
-	"bot/domain/subscribe/entity"
-	"bot/domain/subscribe/infrastructure/model"
+	"bot/pkg/notify/entity"
+	"bot/pkg/notify/infrastructure/model"
 )
 
 type (
@@ -22,11 +20,9 @@ func NewArticle(storage *gorm.DB) Article {
 }
 
 func (a Article) Find() []entity.Article {
-	fmt.Println("pkg/notify/infrastructure/article")
-
 	data := []model.Article{}
 	a.storage.
-		Select([]string{"id", "title", "sapo", "origin"}).
+		Select([]string{"id", "title", "sapo"}).
 		Find(&data)
 
 	result := []entity.Article{}
@@ -41,7 +37,9 @@ func castToArticle(
 	t model.Article,
 ) entity.Article {
 	return entity.NewArticle(
+		t.ID,
 		t.Title,
-		t.Url,
+		t.Sapo,
+		"",
 	)
 }

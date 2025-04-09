@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"bot/domain/subscribe/entity"
+	"bot/pkg/notify/entity"
 )
 
 type (
