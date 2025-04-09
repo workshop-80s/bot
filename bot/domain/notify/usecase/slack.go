@@ -3,8 +3,8 @@ package usecase
 import (
 	"github.com/google/wire"
 
-	repository "bot/pkg/notify/infrastructure/repository"
-	repositoryI "bot/pkg/notify/repository"
+	repository "bot/domain/notify/infrastructure/repository"
+	repositoryI "bot/domain/notify/repository"
 )
 
 type (

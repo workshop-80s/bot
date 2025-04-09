@@ -7,7 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/jinzhu/gorm"
 
-	uc "bot/pkg/notify/usecase"
+	uc "bot/domain/notify/usecase"
 )
 
 func InitialSlack(storage *gorm.DB) uc.Slack {

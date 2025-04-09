@@ -7,8 +7,8 @@
 package handler
 
 import (
-	"bot/pkg/notify/infrastructure/repository"
-	"bot/pkg/notify/usecase"
+	"bot/domain/notify/infrastructure/repository"
+	"bot/domain/notify/usecase"
 	"github.com/jinzhu/gorm"
 )
 

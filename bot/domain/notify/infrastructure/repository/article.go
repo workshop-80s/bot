@@ -3,8 +3,8 @@ package repository
 import (
 	"github.com/jinzhu/gorm"
 
-	"bot/pkg/notify/entity"
-	"bot/pkg/notify/infrastructure/model"
+	"bot/domain/notify/entity"
+	"bot/domain/notify/infrastructure/model"
 )
 
 type (

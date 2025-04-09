@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	notify "bot/pkg/notify/handler"
+	notify "bot/domain/notify/handler"
 )
 
 func Execute() {

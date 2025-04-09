@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bot/infrastructure/cmd"
 	"flag"
 	"fmt"
 	"os"
+
+	"bot/infrastructure/cmd"
 )
 
 func main() {
