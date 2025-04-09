@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	article "bot/domain/article/scraper/handler"
 	notify "bot/domain/notify/handler"
 )
 
@@ -12,7 +13,7 @@ func Execute() {
 	case "notify":
 		notify.Register()
 	case "article":
-		fmt.Println("article")
+		article.Register()
 	default:
 		fmt.Println("default")
 		os.Exit(1)
