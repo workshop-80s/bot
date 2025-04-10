@@ -7,15 +7,16 @@
 package handler
 
 import (
+	"bot/domain/article/scraper/infrastructure/repository"
 	"bot/domain/article/scraper/usecase"
-	"bot/domain/notify/infrastructure/repository"
 	"github.com/jinzhu/gorm"
 )
 
 // Injectors from wire.go:
 
 func InitScraper(storage *gorm.DB) usecase.Scraper {
+	articleHub := repository.NewArticleHub(storage)
 	article := repository.NewArticle(storage)
-	scraper := usecase.NewScraper(article)
+	scraper := usecase.NewScraper(articleHub, article)
 	return scraper
 }

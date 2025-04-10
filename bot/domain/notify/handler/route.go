@@ -5,8 +5,10 @@ import (
 	"os"
 )
 
-func Register() {
-	switch os.Args[2] {
+func Register(params ...string) {
+	cmd := params[0]
+
+	switch cmd {
 	case "slack":
 		slack()
 	default:

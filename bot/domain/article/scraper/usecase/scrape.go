@@ -13,19 +13,26 @@ import (
 
 type (
 	Scraper struct {
-		repository repositoryI.Article
+		article    repositoryI.Article
+		articleHub repositoryI.ArticleHub
 	}
 )
 
 var ProviderScraper = wire.NewSet(
 	NewScraper,
+	repository.NewArticleHub,
 	repository.NewArticle,
+	wire.Bind(new(repositoryI.ArticleHub), new(repository.ArticleHub)),
 	wire.Bind(new(repositoryI.Article), new(repository.Article)),
 )
 
-func NewScraper(r repositoryI.Article) Scraper {
+func NewScraper(
+	articleHubRepository repositoryI.ArticleHub,
+	articleRepository repositoryI.Article,
+) Scraper {
 	return Scraper{
-		repository: r,
+		article:    articleRepository,
+		articleHub: articleHubRepository,
 	}
 }
 
@@ -42,8 +49,9 @@ func (s Scraper) Scrape() {
 	// fetch article_original
 	// scrape article
 	// save database
-	agent := "nqs"
-	s.getListFromHub(agent)
+	// agent := "nqs"
+	// s.getListFromHub(agent)
 
-	fmt.Println("scraper")
+	s.article.Find()
+	s.articleHub.Find()
 }

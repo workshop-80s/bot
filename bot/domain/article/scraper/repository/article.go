@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"bot/domain/notify/entity"
+	"bot/domain/article/scraper/entity"
 )
 
 type (

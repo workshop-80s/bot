@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	article "bot/domain/article/scraper/handler"
@@ -9,13 +8,14 @@ import (
 )
 
 func Execute() {
+	params := os.Args[2:]
+
 	switch os.Args[1] {
 	case "notify":
-		notify.Register()
+		notify.Register(params...)
 	case "article":
-		article.Register()
+		article.Register(params...)
 	default:
-		fmt.Println("default")
 		os.Exit(1)
 	}
 }
