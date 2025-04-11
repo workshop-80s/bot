@@ -21,5 +21,5 @@ func scrape() {
 	}()
 
 	uc := InitScraper(db)
-	uc.Scrape()
+	uc.Crawl()
 }

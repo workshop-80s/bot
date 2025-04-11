@@ -36,7 +36,7 @@ func NewScraper(
 	}
 }
 
-func (s Scraper) Scrape() {
+func (s Scraper) Crawl() {
 	// fetch article_original
 	// scrape article
 	// save database
@@ -49,7 +49,6 @@ func (s Scraper) Scrape() {
 		s.getListFromHub(c)
 	}
 
-	
 	s.article.Find()
 }
 
