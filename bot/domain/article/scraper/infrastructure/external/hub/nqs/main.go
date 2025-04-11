@@ -42,9 +42,6 @@ func CrawlTopPage() []entity.Article {
 			title := e1.Text
 			url := strings.TrimLeft(e1.Attr("href"), "/")
 
-			fmt.Println("title:", title)
-			fmt.Println("url:", url)
-			fmt.Println()
 			p := entity.NewArticle(
 				0,     // id
 				0,     // mode

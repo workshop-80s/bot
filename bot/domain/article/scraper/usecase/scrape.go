@@ -36,15 +36,6 @@ func NewScraper(
 	}
 }
 
-func (s Scraper) getListFromHub(agent string) {
-	p := hub.CrawlTopPage(agent)
-	for _, e := range p {
-		// Code to be executed for each element
-		fmt.Println(e.Title())
-		fmt.Println(e.Url())
-	}
-}
-
 func (s Scraper) Scrape() {
 	// fetch article_original
 	// scrape article
@@ -52,6 +43,19 @@ func (s Scraper) Scrape() {
 	// agent := "nqs"
 	// s.getListFromHub(agent)
 
+	hubs := s.articleHub.Find()
+	for _, h := range hubs {
+		c := h.Code()
+		s.getListFromHub(c)
+	}
+
+	
 	s.article.Find()
-	s.articleHub.Find()
+}
+
+func (s Scraper) getListFromHub(agent string) {
+	p := hub.CrawlTopPage(agent)
+	for _, e := range p {
+		fmt.Printf("%s: %s\n", agent, e.Url())
+	}
 }
