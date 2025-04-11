@@ -101,7 +101,6 @@ jobs:
           name: "Unit test"
           command: |
             cd << pipeline.parameters.pkg_dir >>
-            ENV=test go run main.go subscribe
             go test ./...
 
 workflows:
