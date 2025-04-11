@@ -63,7 +63,7 @@ func (s *articleTestSuite) SetupTest() {
 
 	data := generateFakeArticle()
 
-	s.storage.Exec("truncate articles;")
+	s.storage.Exec("truncate article;")
 	for _, t := range data {
 		s.storage.Create(t)
 	}
@@ -74,7 +74,7 @@ func (s *articleTestSuite) SetupTest() {
 // run after each test
 func (s *articleTestSuite) TearDownTest() {
 	log.Println("TearDownTest()")
-	s.storage.Exec("truncate articles;")
+	s.storage.Exec("truncate article;")
 }
 
 // run before each test
