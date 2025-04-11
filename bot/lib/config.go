@@ -3,14 +3,23 @@ package lib
 import (
 	"log"
 	"os"
+	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/spf13/viper"
 )
 
 var (
-	root = "./config"
+	root string
 )
+
+func init() {
+	_, b, _, _ := runtime.Caller(0)
+	currentPath := path.Join(filepath.Dir(b))
+	root = path.Join(filepath.Dir(currentPath), "config")
+}
 
 func GetEnv() string {
 	env := os.Getenv("ENV")

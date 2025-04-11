@@ -9,8 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"bot/domain/notify/infrastructure/model"
 	"bot/infrastructure/storage/database"
+	"bot/lib"
+
+	"bot/domain/article/scraper/infrastructure/model"
 )
 
 func generateFakeArticle() []model.Article {
@@ -18,11 +20,14 @@ func generateFakeArticle() []model.Article {
 
 	for i := range 10 {
 		t := model.Article{
-			ID:          i + 1,
-			Url:         gofakeit.URL(),
-			Title:       gofakeit.Sentence(6),
-			Sapo:        gofakeit.Paragraph(3, 4, 8, "\n"),
-			OriginalUrl: gofakeit.URL(),
+			ID:           i + 1,
+			Mode:         1,
+			Title:        gofakeit.Sentence(6),
+			Sapo:         gofakeit.Paragraph(3, 4, 8, "\n"),
+			Content:      gofakeit.Paragraph(3, 4, 8, "\n"),
+			Image:        gofakeit.URL(),
+			Origin:       gofakeit.URL(),
+			ArticleHubID: 1,
 		}
 
 		data = append(data, t)
@@ -41,7 +46,8 @@ type articleTestSuite struct {
 func (s *articleTestSuite) SetupSuite() {
 	log.Println("SetupSuite()")
 
-	s.storage = database.Connect()
+	config := lib.GetEnvConfigMap("db", "test")
+	s.storage = database.Connect(config)
 }
 
 // run once, after test suite methods
@@ -99,17 +105,18 @@ func TestArticleTestSuite(t *testing.T) {
 }
 
 func TestCastToArticle(t *testing.T) {
-	m := model.NewArticle(
-		1,
-		"url",
-		"title",
-		"sapo",
-		"ou",
-	)
+	e := model.Article{
+		ID:           1,
+		Mode:         1,
+		Title:        "title",
+		Sapo:         gofakeit.Paragraph(3, 4, 8, "\n"),
+		Content:      gofakeit.Paragraph(3, 4, 8, "\n"),
+		Image:        gofakeit.URL(),
+		Origin:       gofakeit.URL(),
+		ArticleHubID: 1,
+	}
 
-	e := castToArticle(m)
-
-	actual := e.Title()
+	actual := e.Title
 	expected := "title"
 
 	assert.Equal(t, expected, actual)
