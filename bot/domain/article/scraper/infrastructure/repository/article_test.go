@@ -96,7 +96,7 @@ func (t *articleTestSuite) TestFind() {
 		got := len(data)
 		want := len(t.data)
 
-		assert.Equal(t.T(), want, got, "should be 2 records")
+		assert.Equal(t.T(), want, got, "should be 10 records")
 	})
 }
 

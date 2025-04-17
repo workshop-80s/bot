@@ -25,5 +25,25 @@ func (a Article) Find() []entity.Article {
 		Select([]string{"id", "title", "sapo"}).
 		Find(&data)
 
-	return []entity.Article{}
+	result := []entity.Article{}
+	for _, t := range data {
+		result = append(result, castToArticleEntity(t))
+	}
+
+	return result
+}
+
+func castToArticleEntity(
+	t model.Article,
+) entity.Article {
+	return entity.NewArticle(
+		t.ID,
+		t.Mode,
+		t.Title,
+		t.Sapo,
+		t.Content,
+		t.Image,
+		t.Origin,
+		t.ArticleHubID,
+	)
 }
