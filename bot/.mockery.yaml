@@ -1,6 +1,6 @@
 with-expecter: false
 inpackage: true
-filename: "{{.InterfaceNameLower}}_mock.go"
+filename: "{{.InterfaceNameSnake}}_mock.go"
 mockname: "Mock{{.InterfaceName}}"
 outpkg: "{{.PackageName}}"
 dir: "{{.InterfaceDir}}"
