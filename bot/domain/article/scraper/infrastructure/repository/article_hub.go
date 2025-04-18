@@ -23,6 +23,7 @@ func (a ArticleHub) Find() []entity.ArticleHub {
 	data := []model.ArticleHub{}
 	a.storage.
 		Select([]string{"id", "code"}).
+		Where("mode = ?", 10).
 		Find(&data)
 
 	result := []entity.ArticleHub{}

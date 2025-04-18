@@ -62,7 +62,7 @@ func CrawlTopPage() []entity.Article {
 	return result
 }
 
-func CrawlDetail(url string) entity.Article {
+func CrawlDetailPage(url string) entity.Article {
 	c := colly.NewCollector()
 
 	title := ""
