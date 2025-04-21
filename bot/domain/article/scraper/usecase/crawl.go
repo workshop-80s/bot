@@ -50,19 +50,18 @@ func (s Scraper) Crawl() {
 // https://www.codingexplorations.com/blog/interview-series-when-to-use-buffered-and-unbuffered-channels
 // https://medium.com/@josueparra2892/golang-concurrency-worker-pool-fa62ffe6e438
 
-func getDetailURL(
+func getPageLink(
 	wg *sync.WaitGroup,
 	agents <-chan string,
-	// agent string,
 	details chan<- string,
 ) {
-	defer wg.Done()
 
 	agent := <-agents
 
-	fmt.Println("  getDetailURL - ", agent)
+	fmt.Println("  getPageLink:", agent)
 	urls := hub.CrawlTopPage(agent)
 	for _, u := range urls {
+		fmt.Println("    getPageLink:", u.Title())
 		details <- u.Url()
 	}
 }
@@ -71,46 +70,64 @@ func (s Scraper) getList() {
 	const numWorkers = 20
 
 	var wg sync.WaitGroup
+	// var wgDetail sync.WaitGroup
 
-	details := make(chan string)
-	agents := make(chan string, 10)
+	details := make(chan string, 20)
+	agents := make(chan string, 5)
+	// articles := make(chan entity.Article, 50)
+	// register workers for top page
 
+	fmt.Println("fetch DB")
 	hubs := s.articleHub.Find()
-
-	for i := 1; i <= numWorkers; i++ {
-		wg.Add(1)
-		go getDetailURL(&wg, agents, details)
+	for _, h := range hubs {
+		fmt.Println("fetch DB", h.Code())
+		agents <- h.Code()
 	}
+
+	wg.Add(numWorkers)
 
 	go func() {
 		fmt.Println("Wait BEGIN")
 
 		wg.Wait()
-		close(details)
+		// close(details)
 		close(agents)
+		// close(articles)
 
 		fmt.Println("Wait END")
 	}()
 
-	for _, h := range hubs {
-		agents <- h.Code()
-	}
+	// go getPageLink(&wg, agents, details)
 
-	fmt.Println("   getList out BEGIN")
-	r := []string{}
+	// register workers for detail page
+	// for i := 1; i <= numWorkers; i++ {
+	// 	wg.Add(1)
+	// 	go getPageContent(&wg, details, articles)
+	// }
+
+	fmt.Println("getList out BEGIN")
+	fmt.Println()
 	for v := range details {
-		r = append(r, v)
+		fmt.Println("  detail:", v)
 	}
+	r := []entity.Article{}
+	// for v := range articles {
+	// 	fmt.Println("  detail:", v.Title())
+	// 	r = append(r, v)
+	// }
 
-	fmt.Println("   getList out: ", len(r))
-	fmt.Println("   getList out END")
+	fmt.Println("getList out END", len(r))
 }
 
-func (s Scraper) getDetail(
-	ch chan entity.Article,
-	agent string,
-	url string,
+func getPageContent(
+	wg *sync.WaitGroup,
+	details <-chan string,
+	articles chan<- entity.Article,
 ) {
-	e := hub.CrawlDetailPage(agent, url)
-	ch <- e
+	defer wg.Done()
+
+	url := <-details
+	hub.CrawlDetailPage("agent", url)
+	fmt.Println("  getPageContent:", url)
+	// articles <- e
 }
