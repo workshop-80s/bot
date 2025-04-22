@@ -54,6 +54,6 @@ func TestCrawl(t *testing.T) {
 	uc.Crawl()
 
 	t.Run("repository.Find is called", func(t *testing.T) {
-		mockArticle.AssertNumberOfCalls(t, "Find", 1)
+		mockArticleHub.AssertNumberOfCalls(t, "Find", 1)
 	})
 }
