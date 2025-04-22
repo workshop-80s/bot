@@ -10,8 +10,6 @@ import (
 	"bot/domain/article/scraper/entity"
 )
 
-const domain = "https://cafef.vn"
-
 type (
 	Cafef struct {
 		hubId  int
@@ -19,7 +17,7 @@ type (
 	}
 )
 
-func NewCafef(
+func NewHub(
 	hubId int,
 	domain string,
 ) Cafef {
@@ -42,7 +40,7 @@ func (cff Cafef) crawlTopPageSlave(link string) []entity.Article {
 			}
 
 			title := e1.Text
-			url := domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
+			url := cff.domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
 
 			p := entity.NewArticle(
 				0,         // id
@@ -105,6 +103,8 @@ func (cff Cafef) crawlTopPageMain(link string) []entity.Article {
 }
 
 func (cff Cafef) CrawlTopPage() []entity.Article {
+	domain := cff.domain
+
 	result := cff.crawlTopPageMain(domain)
 
 	r := cff.crawlTopPageSlave(domain + "/timelinehome/2.chn")

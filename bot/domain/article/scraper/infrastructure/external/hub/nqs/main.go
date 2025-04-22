@@ -1,7 +1,6 @@
 package nqs
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -10,9 +9,24 @@ import (
 	_ "bot/lib/file"
 )
 
-const domain = "https://nguoiquansat.vn"
+type (
+	Nqs struct {
+		hubId  int
+		domain string
+	}
+)
 
-func CrawlTopPage() []entity.Article {
+func NewHub(
+	hubId int,
+	domain string,
+) Nqs {
+	return Nqs{
+		hubId:  hubId,
+		domain: domain,
+	}
+}
+
+func (nqs Nqs) CrawlTopPage() []entity.Article {
 	c := colly.NewCollector()
 
 	result := []entity.Article{}
@@ -57,12 +71,12 @@ func CrawlTopPage() []entity.Article {
 		})
 	})
 
-	c.Visit(domain)
+	c.Visit(nqs.domain)
 
 	return result
 }
 
-func CrawlDetail(url string) entity.Article {
+func (nqs Nqs) CrawlDetailPage(url string) entity.Article {
 	c := colly.NewCollector()
 
 	title := ""
@@ -101,33 +115,21 @@ func CrawlDetail(url string) entity.Article {
 			return false
 		})
 
-		// e.ForEachWithBreak(".sc-longform-header-meta", func(_ int, e1 *colly.HTMLElement) bool {
-		// 	sapo = e1.Text
-		// 	return false
-		// })
-
-		fmt.Println("title:", title)
-		fmt.Println("sapo:", sapo)
-
-		fmt.Println("content BEGIN")
 		e.ForEach("p", func(_ int, e1 *colly.HTMLElement) {
-			fmt.Println(e1.Text)
-
 			content += strings.TrimSpace(e1.Text)
 		})
-		fmt.Println("content END")
 	})
 
 	c.Visit(url)
 
 	return entity.NewArticle(
-		0,       // id
-		0,       // mode
-		title,   // title
-		sapo,    // sapo
-		content, // content
-		image,   // image
-		url,     // origin
-		0,       // source id
+		0,         // id
+		0,         // mode
+		title,     // title
+		sapo,      // sapo
+		content,   // content
+		image,     // image
+		url,       // origin
+		nqs.hubId, // source id
 	)
 }

@@ -3,7 +3,7 @@ package hub
 import (
 	"bot/domain/article/scraper/entity"
 	cafef "bot/domain/article/scraper/infrastructure/external/hub/cafef"
-	_ "bot/domain/article/scraper/infrastructure/external/hub/nqs"
+	nqs "bot/domain/article/scraper/infrastructure/external/hub/nqs"
 )
 
 type (
@@ -19,9 +19,9 @@ func NewCrawler(hub entity.ArticleHub) Crawler {
 
 	switch hubId {
 	case 1: // cafef
-		return cafef.NewCafef(hubId, domain)
-		// case 2:
-		// 	return nqs.NewCrawler()
+		return cafef.NewHub(hubId, domain)
+	case 2:
+		return nqs.NewHub(hubId, domain)
 	}
 	panic("not found crawler")
 }
