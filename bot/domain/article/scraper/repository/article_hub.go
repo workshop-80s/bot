@@ -9,8 +9,3 @@ type (
 		Find() []entity.ArticleHub
 	}
 )
-
-// condition := map[string]interface{}{}
-// 	if option["condition"] != nil {
-// 		condition = option["condition"].(map[string]interface{})
-// 	}

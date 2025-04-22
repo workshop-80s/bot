@@ -3,7 +3,6 @@ package cafef
 import (
 	_ "bytes"
 	_ "encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -13,7 +12,24 @@ import (
 
 const domain = "https://cafef.vn"
 
-func crawlTopPageSlave(link string) []entity.Article {
+type (
+	Cafef struct {
+		hubId  int
+		domain string
+	}
+)
+
+func NewCafef(
+	hubId int,
+	domain string,
+) Cafef {
+	return Cafef{
+		hubId:  hubId,
+		domain: domain,
+	}
+}
+
+func (cff Cafef) crawlTopPageSlave(link string) []entity.Article {
 	c := colly.NewCollector()
 
 	result := []entity.Article{}
@@ -29,16 +45,15 @@ func crawlTopPageSlave(link string) []entity.Article {
 			url := domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
 
 			p := entity.NewArticle(
-				0,     // id
-				0,     // mode
-				title, // title
-				"",    // sapo
-				"",    // content
-				"",    // image
-				url,   // origin
-				0,     // source id
+				0,         // id
+				0,         // mode
+				title,     // title
+				"",        // sapo
+				"",        // content
+				"",        // image
+				url,       // origin
+				cff.hubId, // source id
 			)
-
 			result = append(result, p)
 		})
 	})
@@ -47,7 +62,7 @@ func crawlTopPageSlave(link string) []entity.Article {
 	return result
 }
 
-func crawlTopPageMain(link string) []entity.Article {
+func (cff Cafef) crawlTopPageMain(link string) []entity.Article {
 	c := colly.NewCollector()
 
 	result := []entity.Article{}
@@ -66,17 +81,17 @@ func crawlTopPageMain(link string) []entity.Article {
 					}
 
 					title := e1.Attr("title")
-					url := domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
+					url := cff.domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
 
 					p := entity.NewArticle(
-						0,     // id
-						0,     // mode
-						title, // title
-						"",    // sapo
-						"",    // content
-						"",    // image
-						url,   // origin
-						0,     // source id
+						0,         // id
+						0,         // mode
+						title,     // title
+						"",        // sapo
+						"",        // content
+						"",        // image
+						url,       // origin
+						cff.hubId, // source id
 					)
 					result = append(result, p)
 				})
@@ -89,16 +104,16 @@ func crawlTopPageMain(link string) []entity.Article {
 	return result
 }
 
-func CrawlTopPage() []entity.Article {
-	result := crawlTopPageMain(domain)
+func (cff Cafef) CrawlTopPage() []entity.Article {
+	result := cff.crawlTopPageMain(domain)
 
-	r := crawlTopPageSlave(domain + "/timelinehome/2.chn")
+	r := cff.crawlTopPageSlave(domain + "/timelinehome/2.chn")
 	result = append(result, r...)
 
 	return result
 }
 
-func CrawlDetail(url string) entity.Article {
+func (cff Cafef) CrawlDetailPage(url string) entity.Article {
 	c := colly.NewCollector()
 
 	title := ""
@@ -109,19 +124,19 @@ func CrawlDetail(url string) entity.Article {
 	c.OnHTML(".totalcontentdetail", func(e *colly.HTMLElement) {
 		e.ForEach("h1.title", func(i int, e1 *colly.HTMLElement) {
 			title += strings.TrimSpace(e1.Text)
-			fmt.Println("title:", title)
+			// fmt.Println("title:", title)
 		})
 
 		e.ForEach("p.dateandcat span.pdate", func(i int, e1 *colly.HTMLElement) {
 			timestamp += strings.TrimSpace(e1.Text)
-			fmt.Println("timestamp:", timestamp)
+			// fmt.Println("timestamp:", timestamp)
 		})
 	})
 
 	c.OnHTML(".w640", func(e *colly.HTMLElement) {
 		e.ForEach("h2.sapo", func(i int, e1 *colly.HTMLElement) {
 			caption += strings.TrimSpace(e1.Text)
-			fmt.Println("caption:", caption)
+			// fmt.Println("caption:", caption)
 		})
 	})
 
@@ -131,25 +146,25 @@ func CrawlDetail(url string) entity.Article {
 			return false
 		})
 
-		fmt.Println("content BEGIN")
+		// fmt.Println("content BEGIN")
 		e.ForEach(".detail-content > p", func(_ int, e1 *colly.HTMLElement) {
-			fmt.Println(e1.Text)
+			// fmt.Println(e1.Text)
 
 			content += strings.TrimSpace(e1.Text)
 		})
-		fmt.Println("content END")
+		// fmt.Println("content END")
 	})
 
 	c.Visit(url)
 
 	return entity.NewArticle(
-		0,       // id
-		0,       // mode
-		title,   // title
-		caption, // sapo
-		content, // content
-		"",      // image
-		url,     // origin
-		0,       // source id
+		0,         // id
+		0,         // mode
+		title,     // title
+		caption,   // sapo
+		content,   // content
+		"",        // image
+		url,       // origin
+		cff.hubId, // source id
 	)
 }

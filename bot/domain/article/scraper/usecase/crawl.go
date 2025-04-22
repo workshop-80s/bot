@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/wire"
 
-	hub "bot/domain/article/scraper/infrastructure/external/hub"
-
+	"bot/domain/article/scraper/entity"
+	"bot/domain/article/scraper/infrastructure/external/hub"
 	repository "bot/domain/article/scraper/infrastructure/repository"
 	repositoryI "bot/domain/article/scraper/repository"
 )
@@ -37,24 +37,58 @@ func NewScraper(
 }
 
 func (s Scraper) Crawl() {
-	// fetch article_original
-	// scrape article
-	// save database
-	// agent := "nqs"
-	// s.getListFromHub(agent)
-
 	hubs := s.articleHub.Find()
+
+	articles := []entity.Article{}
 	for _, h := range hubs {
-		c := h.Code()
-		s.getListFromHub(c)
+		r := s.crawl(h)
+		articles = append(articles, r...)
 	}
 
-	s.article.Find()
+	// save to database
+	for _, a := range articles {
+		s.article.Create(a)
+	}
 }
 
-func (s Scraper) getListFromHub(agent string) {
-	p := hub.CrawlTopPage(agent)
-	for _, e := range p {
-		fmt.Printf("%s: %s\n", agent, e.Url())
+func (s Scraper) crawl(h entity.ArticleHub) []entity.Article {
+	crawler := hub.NewCrawler(h)
+	details := crawler.CrawlTopPage()
+
+	articles := []entity.Article{}
+
+	i := 0
+	for _, d := range details {
+		i++
+		if i > 1 {
+			break
+		}
+
+		url := d.Url()
+		if s.isCrawled(url) {
+			fmt.Printf("already crawled: %s\n", url)
+			continue
+		}
+
+		article := crawler.CrawlDetailPage(url)
+		articles = append(articles, article)
 	}
+
+	return articles
+
+}
+
+func (s Scraper) isCrawled(url string) bool {
+	attribute := []string{"id", "title"}
+	condition := map[string]interface{}{
+		"origin": url,
+	}
+
+	option := map[string]interface{}{
+		"condition": condition,
+		"attribute": attribute,
+	}
+
+	articles := s.article.FindByOption(option)
+	return len(articles) > 0
 }

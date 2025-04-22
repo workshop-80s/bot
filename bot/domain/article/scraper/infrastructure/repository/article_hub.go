@@ -20,9 +20,12 @@ func NewArticleHub(storage *gorm.DB) ArticleHub {
 }
 
 func (a ArticleHub) Find() []entity.ArticleHub {
+	const modeEnabled = 11
+
 	data := []model.ArticleHub{}
 	a.storage.
-		Select([]string{"id", "code"}).
+		Select([]string{"id", "code", "domain"}).
+		Where("mode = ?", modeEnabled).
 		Find(&data)
 
 	result := []entity.ArticleHub{}
@@ -39,5 +42,6 @@ func castToArticleHubEntity(
 	return entity.NewArticleHub(
 		t.ID,
 		t.Code,
+		t.Domain,
 	)
 }
