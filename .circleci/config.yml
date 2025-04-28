@@ -1,0 +1,115 @@
+# https://circleci.com/docs/configuration-reference/
+# https://circleci.com/docs/reusing-config/#parameter-syntax
+
+version: 2.1
+
+migration_branch: &migration_branch init
+
+parameters:
+  ssh: 
+    type: string
+    default: j3ns_devops
+  migration_branch:
+    default: *migration_branch
+    type: string
+  migration_dir:
+    default: "w8s-migration"
+    type: string
+  migration_git:
+    default: "git@github.com:workshop-80s/migration.git"
+    type: string
+  database_buzz:
+    default: "buzz_test"
+    type: string
+  pkg_dir:
+    default: "bot"
+    type: string
+
+jobs:
+  build:
+    working_directory: ~/project
+    docker:
+      - image: cimg/go:1.23
+    environment:
+      ssh: << pipeline.parameters.ssh >>
+      migration_branch: << pipeline.parameters.migration_branch >>
+      migration_dir: << pipeline.parameters.migration_dir >>
+      migration_git: << pipeline.parameters.migration_git >>
+    steps:
+      - checkout
+      - run: 
+          name: "Install package"
+          command: | 
+            cd << pipeline.parameters.pkg_dir >>
+            go mod vendor
+      - run:
+          name: Setup github authenticate
+          command: |
+            mkdir -p ~/.ssh 
+            echo "$$ssh" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run: 
+          name: "Pull migration (<< pipeline.parameters.migration_branch >>)"
+          command: | 
+            git clone $migration_git $migration_dir
+            cd $migration_dir
+            git checkout $migration_branch
+            git pull origin $migration_branch
+            go mod vendor
+      
+      - persist_to_workspace:
+          root: "."
+          paths:
+            - "*"
+            - "<< pipeline.parameters.migration_dir >>"
+
+  test:
+    environment:
+      ENV: test
+    working_directory: ~/project
+    docker:
+      - image: cimg/go:1.23
+      - image: cimg/mysql:8.0
+        environment:
+          MYSQL_DATABASE: << pipeline.parameters.database_buzz >>
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    steps:
+      # - run:
+      #     name: mysql client (optional)
+      #     command: |
+      #       sudo apt-get update
+      #       sudo apt-get install -y default-mysql-client
+      # - checkout
+      - run:
+          name: Waiting for MySQL to be ready
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+      - attach_workspace:
+          at: ~/project
+      - run: 
+          name: "Migrate database"
+          command: |
+            cd << pipeline.parameters.migration_dir >>
+            go run main.go migration --env test up
+      - run: 
+          name: "Seed data"
+          command: |
+            cd << pipeline.parameters.migration_dir >>
+            go run main.go seed --env test up
+      - run: 
+          name: "Unit test"
+          command: |
+            cd << pipeline.parameters.pkg_dir >>
+            go test ./...
+
+workflows:
+  build_test:
+    jobs:
+      - build:
+          context:
+            - github
+      - test:
+          requires:
+            - build
+

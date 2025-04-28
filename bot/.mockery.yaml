@@ -1,0 +1,16 @@
+with-expecter: false
+inpackage: true
+filename: "{{.InterfaceNameSnake}}_mock.go"
+mockname: "Mock{{.InterfaceName}}"
+outpkg: "{{.PackageName}}"
+dir: "{{.InterfaceDir}}"
+packages:
+    bot/domain/article/scraper:
+        config:
+            all: true
+            recursive: true
+    # bot/domain/subscribe/repository:
+    #     config:
+    #         all: true
+        # interfaces: # want to specify the interface want to be generated
+        #     Product:
