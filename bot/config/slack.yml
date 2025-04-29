@@ -1,5 +1,6 @@
 dev:
-  bot_token: xoxb-8827139872881-8821913393826-oxIBVyv1RnDiXB6VycD4CiO4
+  # xoxb-8827139872881-8821913393826-oxIBVyv1RnDiXB6VycD4CiO4
+  bot_token: 
   channel:
     main: C08QB471DQ9 # buzz
     general: C08QB440J3B # all-w8s-beta

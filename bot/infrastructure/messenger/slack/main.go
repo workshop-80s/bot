@@ -4,8 +4,6 @@ import (
 	"github.com/parnurzeal/gorequest"
 )
 
-const token = "xoxb-8827139872881-8821913393826-oxIBVyv1RnDiXB6VycD4CiO4"
-
 type (
 	Slack struct {
 		botToken string
