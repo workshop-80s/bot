@@ -8,14 +8,16 @@ package handler
 
 import (
 	"bot/domain/notify/infrastructure/repository"
+	slack2 "bot/domain/notify/infrastructure/service/messenger/slack"
 	"bot/domain/notify/usecase"
 	"github.com/jinzhu/gorm"
 )
 
 // Injectors from wire.go:
 
-func InitialSlack(storage *gorm.DB) usecase.Slack {
+func InitialSlack(storage *gorm.DB, botToken string, channels map[string]string) usecase.Slack {
 	article := repository.NewArticle(storage)
-	usecaseSlack := usecase.NewSlack(article)
+	slackSlack := slack2.NewSlack(botToken, channels)
+	usecaseSlack := usecase.NewSlack(article, slackSlack)
 	return usecaseSlack
 }

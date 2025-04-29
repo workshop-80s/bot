@@ -20,9 +20,12 @@ func NewArticle(storage *gorm.DB) Article {
 }
 
 func (a Article) Find() []entity.Article {
+	const modeEnabled = 11
+
 	data := []model.Article{}
 	a.storage.
 		Select([]string{"id", "title", "sapo"}).
+		Where("mode = ?", modeEnabled).
 		Find(&data)
 
 	result := []entity.Article{}
@@ -40,6 +43,6 @@ func castToArticle(
 		t.ID,
 		t.Title,
 		t.Sapo,
-		"",
+		"https://nguoiquansat.vn/gan-100-quy-dau-tu-rot-von-viet-nam-dan-tro-thanh-diem-nong-cua-dong-von-cong-nghe-cao-213283.html",
 	)
 }
