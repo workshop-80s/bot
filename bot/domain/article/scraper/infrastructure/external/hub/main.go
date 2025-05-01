@@ -15,3 +15,13 @@ func CrawlTopPage(agent string) []entity.Article {
 	}
 	return []entity.Article{}
 }
+
+func CrawlDetail(agent string, url string) entity.Article {
+	switch agent {
+	case "cafef":
+		return cafef.CrawlDetail(url)
+	case "nqs":
+		return nqs.CrawlDetail(url)
+	}
+	return entity.Article{}
+}

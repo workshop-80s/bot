@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/wire"
 
+	"bot/domain/article/scraper/entity"
 	hub "bot/domain/article/scraper/infrastructure/external/hub"
 
 	repository "bot/domain/article/scraper/infrastructure/repository"
@@ -37,24 +38,29 @@ func NewScraper(
 }
 
 func (s Scraper) Crawl() {
-	// fetch article_original
-	// scrape article
-	// save database
-	// agent := "nqs"
-	// s.getListFromHub(agent)
-
 	hubs := s.articleHub.Find()
+
+	pages := []entity.Article{}
 	for _, h := range hubs {
 		c := h.Code()
-		s.getListFromHub(c)
+		pages = append(pages, s.getPageUrl(c)...)
 	}
 
-	s.article.Find()
+	// details := []entity.Article{}
+	for i, p := range pages {
+		if i > 0 {
+			break
+		}
+		fmt.Printf("%s\n", p.Url())
+		d := s.getPageContent("nqs", p.Url())
+		fmt.Println("details:", d.Title())
+	}
 }
 
-func (s Scraper) getListFromHub(agent string) {
-	p := hub.CrawlTopPage(agent)
-	for _, e := range p {
-		fmt.Printf("%s: %s\n", agent, e.Url())
-	}
+func (s Scraper) getPageUrl(agent string) []entity.Article {
+	return hub.CrawlTopPage(agent)
+}
+
+func (s Scraper) getPageContent(agent string, url string) entity.Article {
+	return hub.CrawlDetail(agent, url)
 }
