@@ -3,11 +3,17 @@ package cafef
 import (
 	_ "bytes"
 	_ "encoding/json"
+	"fmt"
+	"os"
 	"strings"
+	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 
 	"bot/domain/article/scraper/entity"
+	"bot/lib/array"
+	"bot/lib/text"
 )
 
 type (
@@ -115,56 +121,139 @@ func (cff Cafef) CrawlTopPage() []entity.Article {
 
 func (cff Cafef) CrawlDetailPage(url string) entity.Article {
 	c := colly.NewCollector()
-
+	url = "https://cafef.vn/hoa-phat-no-vay-gan-90000-ty-tien-mat-xuong-thap-nhat-4-nam-18825050123344295.chn"
+	// https://cafef.vn/gia-cuoc-van-tai-bien-tang-manh-cong-ty-so-huu-doi-tau-container-lon-nhat-viet-nam-bao-lai-tang-bang-lan-co-phieu-boc-dau-len-dinh-lich-su-188250501232158774.chn
+	url = "https://cafef.vn/dau-thang-5-gui-tiet-kiem-tai-agribank-vietcombank-bidv-vietinbank-huong-lai-suat-cao-nhat-bao-nhieu-188250503075526502.chn"
 	title := ""
+	thumbnail := ""
 	content := ""
-	caption := ""
+	sapo := ""
 	timestamp := ""
 
 	c.OnHTML(".totalcontentdetail", func(e *colly.HTMLElement) {
-		e.ForEach("h1.title", func(i int, e1 *colly.HTMLElement) {
-			title += strings.TrimSpace(e1.Text)
-			// fmt.Println("title:", title)
-		})
-
-		e.ForEach("p.dateandcat span.pdate", func(i int, e1 *colly.HTMLElement) {
-			timestamp += strings.TrimSpace(e1.Text)
-			// fmt.Println("timestamp:", timestamp)
-		})
-	})
-
-	c.OnHTML(".w640", func(e *colly.HTMLElement) {
-		e.ForEach("h2.sapo", func(i int, e1 *colly.HTMLElement) {
-			caption += strings.TrimSpace(e1.Text)
-			// fmt.Println("caption:", caption)
-		})
-	})
-
-	c.OnHTML("#mainContent", func(e *colly.HTMLElement) {
-		e.ForEachWithBreak(".VCSortableInPreviewMode img", func(_ int, e1 *colly.HTMLElement) bool {
-			// thumbnail = e1.Attr("src")
+		e.ForEachWithBreak("h1", func(i int, e1 *colly.HTMLElement) bool {
+			title = strings.TrimSpace(e1.Text)
 			return false
 		})
 
-		// fmt.Println("content BEGIN")
-		e.ForEach(".detail-content > p", func(_ int, e1 *colly.HTMLElement) {
-			// fmt.Println(e1.Text)
-
-			content += strings.TrimSpace(e1.Text)
+		e.ForEachWithBreak("p.dateandcat span.pdate", func(i int, e1 *colly.HTMLElement) bool {
+			timestamp = formatDateTime(strings.TrimSpace(e1.Text))
+			return false
 		})
-		// fmt.Println("content END")
+
+		e.ForEachWithBreak(".w640", func(_ int, e1 *colly.HTMLElement) bool {
+			e1.DOM.Children().Each(func(i int, s *goquery.Selection) {
+				c, _ := s.Attr("class")
+				wl := []string{"sapo", "media VCSortableInPreviewMode"}
+				if !array.Contains(wl, c) {
+					return
+				}
+
+				if c == "media VCSortableInPreviewMode" {
+					thumbnail, _ = s.Find("img").Attr("src")
+					fmt.Println("thumbnail:", thumbnail)
+				}
+
+				if c == "sapo" {
+					sapo = strings.TrimSpace(s.Text())
+				}
+			})
+
+			return false
+		})
+	})
+
+	c.OnHTML("#mainContent .detail-content", func(e *colly.HTMLElement) {
+		e.DOM.Children().Each(func(i int, s *goquery.Selection) {
+			tagName := s.Nodes[0].Data
+
+			wl := []string{"figure", "p"}
+			if !array.Contains(wl, tagName) {
+				return
+			}
+
+			if tagName == "figure" {
+				img := s.Find("img")
+				src, _ := img.Attr("src")
+				t, _ := img.Attr("title")
+
+				content += "<img src='" + src + "' title='" + t + "' />"
+			}
+
+			if tagName == "p" {
+				content += text.Trim(text.StripTag(s.Text()))
+			}
+
+			content += "\n"
+		})
 	})
 
 	c.Visit(url)
+	write("url")
+	write("\n")
+	write(url)
+	write("\n")
+	write("\n")
+	write("title")
+	write("\n")
+	write(title)
+	write("\n")
+	write("\n")
+	write("timestamp")
+	write("\n")
+	write(timestamp)
+	write("\n")
+	write("\n")
+	write("image")
+	write("\n")
+	write(thumbnail)
+	write("\n")
+	write("\n")
+	write("sapo")
+	write("\n")
+	write(sapo)
+	write("\n")
+	write("\n")
+	write("content")
+	write("\n")
+	write(content)
+	write("\n")
 
 	return entity.NewArticle(
 		0,         // id
 		0,         // mode
 		title,     // title
-		caption,   // sapo
+		sapo,      // sapo
 		content,   // content
-		"",        // image
+		thumbnail, // image
 		url,       // origin
 		cff.hubId, // source id
 	)
+}
+
+func formatDateTime(input string) string {
+	layoutIn := "02-01-2006 - 03:04 PM" // layout for parsing
+	layoutOut := "2006-01-02 15:04:05"  // desired output format
+
+	t, err := time.Parse(layoutIn, input)
+	if err != nil {
+		return ""
+	}
+
+	return t.Format(layoutOut)
+}
+
+func write(text string) {
+	// Open file with append and write-only flags. Create it if it doesn't exist.
+	file, err := os.OpenFile("zzz.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	// Write additional content to the file
+	_, err = file.WriteString(text)
+	if err != nil {
+		panic(err)
+	}
 }
