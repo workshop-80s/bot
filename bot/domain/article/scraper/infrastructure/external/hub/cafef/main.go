@@ -3,7 +3,6 @@ package cafef
 import (
 	_ "bytes"
 	_ "encoding/json"
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -151,7 +150,6 @@ func (cff Cafef) CrawlDetailPage(url string) entity.Article {
 
 				if c == "media VCSortableInPreviewMode" {
 					thumbnail, _ = s.Find("img").Attr("src")
-					fmt.Println("thumbnail:", thumbnail)
 				}
 
 				if c == "sapo" {
