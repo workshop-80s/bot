@@ -10,77 +10,66 @@ import (
 )
 
 type (
-	Scraper struct {
-		article    repositoryI.Article
-		articleHub repositoryI.ArticleHub
+	LinkScraper struct {
+		hub  repositoryI.Hub
+		link repositoryI.Link
 	}
 )
 
-var ProviderScraper = wire.NewSet(
-	NewScraper,
-	repository.NewArticleHub,
-	repository.NewArticle,
-	wire.Bind(new(repositoryI.ArticleHub), new(repository.ArticleHub)),
-	wire.Bind(new(repositoryI.Article), new(repository.Article)),
+var LinkScraperProvider = wire.NewSet(
+	NewLinkScraper,
+	repository.NewHub,
+	repository.NewLink,
+	wire.Bind(new(repositoryI.Hub), new(repository.Hub)),
+	wire.Bind(new(repositoryI.Link), new(repository.Link)),
 )
 
-func NewScraper(
-	articleHubRepository repositoryI.ArticleHub,
-	articleRepository repositoryI.Article,
-) Scraper {
-	return Scraper{
-		article:    articleRepository,
-		articleHub: articleHubRepository,
+func NewLinkScraper(
+	hubRepository repositoryI.Hub,
+	linkRepository repositoryI.Link,
+) LinkScraper {
+	return LinkScraper{
+		hub:  hubRepository,
+		link: linkRepository,
 	}
 }
 
-func (s Scraper) Crawl() {
-	hubs := s.articleHub.Find()
+func (s LinkScraper) Crawl() {
+	hubs := s.hub.Find()
 
-	articles := []entity.Article{}
+	links := []entity.Link{}
+
 	for _, h := range hubs {
 		r := s.crawl(h)
-		articles = append(articles, r...)
+		links = append(links, r...)
 	}
 
 	// save to database
-	// for _, a := range articles {
-	// 	s.article.Create(a)
-	// }
+	for _, a := range links {
+		s.link.Create(a)
+	}
 }
 
-func (s Scraper) crawl(h entity.ArticleHub) []entity.Article {
+func (s LinkScraper) crawl(h entity.Hub) []entity.Link {
 	crawler := hub.NewCrawler(h)
-	crawler.CrawlTopPage()
-	// details := crawler.CrawlTopPage()
+	links := crawler.CrawlTopPage()
 
-	articles := []entity.Article{}
+	newLinks := []entity.Link{}
+	for _, t := range links {
+		url := t.Url()
+		if s.isCrawled(url) {
+			continue
+		}
+		newLinks = append(newLinks, t)
+	}
 
-	// i := 0
-	// for _, d := range details {
-	// 	i++
-	// 	if i > 1 {
-	// 		break
-	// 	}
-
-	// 	url := d.Url()
-	// 	if s.isCrawled(url) {
-	// 		fmt.Printf("already crawled: %s\n", url)
-	// 		continue
-	// 	}
-
-	// 	article := crawler.CrawlDetailPage(url)
-	// 	articles = append(articles, article)
-	// }
-
-	return articles
-
+	return newLinks
 }
 
-func (s Scraper) isCrawled(url string) bool {
+func (s LinkScraper) isCrawled(url string) bool {
 	attribute := []string{"id", "title"}
 	condition := map[string]interface{}{
-		"origin": url,
+		"url": url,
 	}
 
 	option := map[string]interface{}{
@@ -88,6 +77,6 @@ func (s Scraper) isCrawled(url string) bool {
 		"attribute": attribute,
 	}
 
-	articles := s.article.FindByOption(option)
-	return len(articles) > 0
+	links := s.link.FindByOption(option)
+	return len(links) > 0
 }

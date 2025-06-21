@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	ArticleHub interface {
-		Find() []entity.ArticleHub
+	Hub interface {
+		Find() []entity.Hub
 	}
 )

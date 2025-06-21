@@ -69,8 +69,6 @@ func (a Article) Create(article entity.Article) (int, error) {
 		article.Content(),
 		article.Image(),
 		article.PublishedAt(),
-		article.Origin(),
-		article.ArticleHubID(),
 	)
 
 	r := a.storage.Create(&m)
@@ -95,8 +93,6 @@ func (a Article) Update(
 		article.Content(),
 		article.Image(),
 		article.PublishedAt(),
-		article.Origin(),
-		article.ArticleHubID(),
 	)
 
 	return a.storage.
@@ -118,7 +114,5 @@ func castToArticleEntity(
 		t.Content,
 		t.Image,
 		t.PublishedAt,
-		t.Origin,
-		t.ArticleHubID,
 	)
 }

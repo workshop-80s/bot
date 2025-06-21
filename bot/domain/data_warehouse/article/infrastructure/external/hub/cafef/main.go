@@ -3,16 +3,16 @@ package cafef
 import (
 	_ "bytes"
 	_ "encoding/json"
-	"os"
-	"strings"
-	"time"
 
-	"github.com/PuerkitoBio/goquery"
+	// "os"
+	"strings"
+
+	// "github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 
 	"bot/domain/data_warehouse/article/entity"
-	"bot/lib/array"
-	"bot/lib/text"
+	// "bot/lib/array"
+	// "bot/lib/text"
 )
 
 type (
@@ -32,10 +32,21 @@ func NewHub(
 	}
 }
 
-func (cff Cafef) crawlTopPageSlave(link string) []entity.Article {
+func (cff Cafef) CrawlTopPage() []entity.Link {
+	domain := cff.domain
+
+	result := cff.crawlTopPageMain(domain)
+
+	r := cff.crawlTopPageSlave(domain + "/timelinehome/2.chn")
+	result = append(result, r...)
+
+	return result
+}
+
+func (cff Cafef) crawlTopPageSlave(link string) []entity.Link {
 	c := colly.NewCollector()
 
-	result := []entity.Article{}
+	result := []entity.Link{}
 
 	c.OnHTML("div.listchungkhoannew div.knswli-right h3", func(e *colly.HTMLElement) {
 		e.ForEach("a", func(i int, e1 *colly.HTMLElement) {
@@ -44,19 +55,12 @@ func (cff Cafef) crawlTopPageSlave(link string) []entity.Article {
 				return
 			}
 
-			title := e1.Text
 			url := cff.domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
 
-			p := entity.NewArticle(
-				0,         // id
-				0,         // mode
-				title,     // title
-				"",        // sapo
-				"",        // content
-				"",        // image
-				"",        // publishedAt
-				url,       // origin
-				cff.hubId, // source id
+			p := entity.NewLink(
+				0,
+				cff.hubId,
+				url,
 			)
 			result = append(result, p)
 		})
@@ -66,10 +70,10 @@ func (cff Cafef) crawlTopPageSlave(link string) []entity.Article {
 	return result
 }
 
-func (cff Cafef) crawlTopPageMain(link string) []entity.Article {
+func (cff Cafef) crawlTopPageMain(link string) []entity.Link {
 	c := colly.NewCollector()
 
-	result := []entity.Article{}
+	result := []entity.Link{}
 
 	c.OnHTML(".news_left", func(e *colly.HTMLElement) {
 		paths := []string{
@@ -84,19 +88,11 @@ func (cff Cafef) crawlTopPageMain(link string) []entity.Article {
 						return
 					}
 
-					title := e1.Attr("title")
 					url := cff.domain + "/" + strings.TrimLeft(e1.Attr("href"), "/")
-
-					p := entity.NewArticle(
-						0,         // id
-						0,         // mode
-						title,     // title
-						"",        // sapo
-						"",        // content
-						"",        // image
-						"",        // publishedAt
-						url,       // origin
-						cff.hubId, // source id
+					p := entity.NewLink(
+						0,
+						cff.hubId,
+						url,
 					)
 					result = append(result, p)
 				})
@@ -109,17 +105,7 @@ func (cff Cafef) crawlTopPageMain(link string) []entity.Article {
 	return result
 }
 
-func (cff Cafef) CrawlTopPage() []entity.Article {
-	domain := cff.domain
-
-	result := cff.crawlTopPageMain(domain)
-
-	r := cff.crawlTopPageSlave(domain + "/timelinehome/2.chn")
-	result = append(result, r...)
-
-	return result
-}
-
+/*
 func (cff Cafef) CrawlDetailPage(url string) entity.Article {
 	c := colly.NewCollector()
 	url = "https://cafef.vn/hoa-phat-no-vay-gan-90000-ty-tien-mat-xuong-thap-nhat-4-nam-18825050123344295.chn"
@@ -258,3 +244,4 @@ func write(text string) {
 		panic(err)
 	}
 }
+*/
