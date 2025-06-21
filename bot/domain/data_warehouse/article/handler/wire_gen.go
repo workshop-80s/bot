@@ -14,9 +14,9 @@ import (
 
 // Injectors from wire.go:
 
-func InitScraper(storage *gorm.DB) usecase.Scraper {
-	articleHub := repository.NewArticleHub(storage)
-	article := repository.NewArticle(storage)
-	scraper := usecase.NewScraper(articleHub, article)
-	return scraper
+func InitScraper(storage *gorm.DB) usecase.LinkScraper {
+	hub := repository.NewHub(storage)
+	link := repository.NewLink(storage)
+	linkScraper := usecase.NewLinkScraper(hub, link)
+	return linkScraper
 }

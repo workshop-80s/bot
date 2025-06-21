@@ -10,8 +10,8 @@ import (
 	uc "bot/domain/data_warehouse/article/usecase"
 )
 
-func InitScraper(storage *gorm.DB) uc.Scraper {
+func InitScraper(storage *gorm.DB) uc.LinkScraper {
 	panic(wire.Build(
-		uc.ProviderScraper,
+		uc.LinkScraperProvider,
 	))
 }
